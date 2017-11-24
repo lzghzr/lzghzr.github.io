@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+  <meta charset="UTF-8">
+  <title>bilive_client</title>
+  <link rel="stylesheet" type="text/css" href="./view/style.css">
+  <script async type="text/javascript" src="./view/options.js"></script>
+  <script async type="text/javascript" src="./view/script.js"></script>
+</head>
+
+<body>
+  <!-- 登录界面 -->
+  <div id="login" class="hide">
+    <div id="path">
+      <span>地址:</span>
+      <input type="text" name="path">
+    </div>
+    <div id="protocol">
+      <span>protocol:</span>
+      <input type="text" name="protocol">
+    </div>
+    <div id="connect">
+      <input type="button" value="连接">
+      <span></span>
+    </div>
+  </div>
+  <!-- 设置界面 -->
+  <div id="option" class="hide">
+    <div class="config">
+      <div id="config"></div>
+      <input type="button" id="saveConfig" value="保存">
+    </div>
+    <div id="user"></div>
+    <div class="addUser userData">
+      <input type="button" id="addUser" value="添加">
+    </div>
+  </div>
+  <!-- 模板 -->
+  <div id="template" class="hide">
+    <template id="configTemplate">
+      <div class="relative">
+        <span class="description"></span>
+        <span class="tip"></span>
+        <input type="text">
+      </div>
+    </template>
+    <template id="userTemplate">
+      <div class="userData">
+        <div class="userConfig"></div>
+        <input type="button" class="saveUser inline" value="保存">
+        <input type="button" class="deleteUser inline" value="删除">
+      </div>
+    </template>
+  </div>
+</body>
+
+</html>
