@@ -96,6 +96,8 @@ var App;
                     _this.__callback[ts](message);
                     delete _this.__callback[ts];
                 }
+                else if (message.cmd === 'log' && typeof _this.onlog === 'function')
+                    _this.onlog(message.msg);
                 else if (typeof _this.onerror === 'function')
                     _this.onerror(data);
                 else
@@ -138,6 +140,16 @@ var App;
         Options.prototype.close = function () {
             this._ws.close();
             this.__callback = {};
+        };
+        /**
+         * 获取Log
+         *
+         * @returns {Promise<logMSG>}
+         * @memberof Options
+         */
+        Options.prototype.getLog = function () {
+            var message = { cmd: 'getLog' };
+            return this._send(message);
         };
         /**
          * 获取设置

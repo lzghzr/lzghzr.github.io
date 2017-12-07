@@ -13,8 +13,6 @@ namespace App {
       , protocolInput = <HTMLInputElement>loginDiv.querySelector('#protocol input')
       , connectInput = <HTMLInputElement>loginDiv.querySelector('#connect input')
       , connectSpan = <HTMLSpanElement>loginDiv.querySelector('#connect span')
-    pathInput.defaultValue = 'ws://127.0.0.1:10080'
-    protocolInput.defaultValue = 'admin'
     connectInput.onclick = async () => {
       let connected = await options.connect(pathInput.value, protocolInput.value)
       if (connected) {
@@ -59,13 +57,14 @@ namespace App {
    * 
    */
   async function showConfig() {
+    // 设置
     let configDiv = <HTMLDivElement>document.querySelector('#config')
       , saveConfigInput = <HTMLInputElement>document.querySelector('#saveConfig')
       , configMSG = await options.getConfig()
       , config = configMSG.data
       , configDF = getConfigTemplate(config)
     // 保存全局设置
-    saveConfigInput.addEventListener('click', async () => {
+    saveConfigInput.onclick = async () => {
       let configMSG = await options.setConfig(config)
       if (configMSG.msg != null) alert(configMSG.msg)
       else {
@@ -75,8 +74,24 @@ namespace App {
         configDiv.innerText = ''
         configDiv.appendChild(configDF)
       }
-    })
+    }
     configDiv.appendChild(configDF)
+    // log
+    let logDiv = <HTMLDivElement>document.querySelector('#log')
+      , logMSG = await options.getLog()
+      , logs = logMSG.data
+      , logDF = document.createDocumentFragment()
+    logs.forEach(log => {
+      let div = document.createElement('div')
+      div.innerText = log
+      logDF.appendChild(div)
+    })
+    options.onlog = data => {
+      let div = document.createElement('div')
+      div.innerText = data
+      logDiv.appendChild(div)
+    }
+    logDiv.appendChild(logDF)
   }
   /**
    * 加载用户设置
@@ -95,13 +110,13 @@ namespace App {
       df.appendChild(userDF)
     }
     // 添加新用户
-    addUserDiv.addEventListener('click', async () => {
+    addUserDiv.onclick = async () => {
       let userDataMSG = await options.newUserData()
         , uid = userDataMSG.uid
         , userData = userDataMSG.data
         , userDF = getUserDF(uid, userData)
       userDiv.appendChild(userDF)
-    })
+    }
     userDiv.appendChild(df)
   }
   /**
@@ -121,7 +136,7 @@ namespace App {
       , userConfigDF = getConfigTemplate(userData)
     userConfigDiv.appendChild(userConfigDF)
     // 保存用户设置
-    saveUserInput.addEventListener('click', async () => {
+    saveUserInput.onclick = async () => {
       let userDataMSG = await options.setUserData(uid, userData)
       if (userDataMSG.msg != null) alert(userDataMSG.msg)
       else {
@@ -131,16 +146,16 @@ namespace App {
         userConfigDiv.innerText = ''
         userConfigDiv.appendChild(userConfigDF)
       }
-    })
+    }
     // 删除用户设置
-    deleteUserInput.addEventListener('click', async () => {
+    deleteUserInput.onclick = async () => {
       let userDataMSG = await options.delUserData(uid)
       if (userDataMSG.msg != null) alert(userDataMSG.msg)
       else {
         alert('删除成功')
         userDataDiv.remove()
       }
-    })
+    }
     return clone
   }
   /**
@@ -163,30 +178,30 @@ namespace App {
         case 'number':
           inputInput.type = 'text'
           inputInput.value = (<number>configValue).toString()
-          inputInput.addEventListener('input', () => {
+          inputInput.oninput = () => {
             config[key] = parseInt(inputInput.value)
-          })
+          }
           break
         case 'numberArray':
           inputInput.type = 'text'
           inputInput.value = (<number[]>configValue).join(',')
-          inputInput.addEventListener('input', () => {
+          inputInput.oninput = () => {
             config[key] = inputInput.value.split(',').map(value => { return parseInt(value) })
-          })
+          }
           break
         case 'string':
           inputInput.type = 'text'
           inputInput.value = (<string>configValue)
-          inputInput.addEventListener('input', () => {
+          inputInput.oninput = () => {
             config[key] = inputInput.value
-          })
+          }
           break
         case 'boolean':
           inputInput.type = 'checkbox'
           inputInput.checked = <boolean>configValue
-          inputInput.addEventListener('change', () => {
+          inputInput.onchange = () => {
             config[key] = inputInput.checked
-          })
+          }
           break
         default:
           break

@@ -14,11 +14,11 @@
   <div id="login" class="hide">
     <div id="path">
       <span>地址:</span>
-      <input type="text" name="path">
+      <input type="text" name="path" value="ws://127.0.0.1:10080">
     </div>
     <div id="protocol">
       <span>protocol:</span>
-      <input type="text" name="protocol">
+      <input type="text" name="protocol" value="admin">
     </div>
     <div id="connect">
       <input type="button" value="连接">
@@ -27,12 +27,13 @@
   </div>
   <!-- 设置界面 -->
   <div id="option" class="hide">
-    <div class="config">
+    <div class="config border margin">
       <div id="config"></div>
       <input type="button" id="saveConfig" value="保存">
     </div>
+    <div id="log" class="border"></div>
     <div id="user"></div>
-    <div class="addUser userData">
+    <div class="addUser floatLeft border margin">
       <input type="button" id="addUser" value="添加">
     </div>
   </div>
@@ -46,7 +47,7 @@
       </div>
     </template>
     <template id="userTemplate">
-      <div class="userData">
+      <div class="floatLeft border margin">
         <div class="userConfig"></div>
         <input type="button" class="saveUser inline" value="保存">
         <input type="button" class="deleteUser inline" value="删除">

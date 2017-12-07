@@ -16,17 +16,25 @@
   display: inline
 }
 .config {
-  border: 1px solid gray;
-  margin: 5px 20px 5px 0;
+  width: 400px;
 }
-.userData {
+#log {
+  height: 170px;
+  overflow: auto;
+  margin: -170px 0px 0px 410px;
+}
+.floatLeft {
   float: left;
+}
+.border {
   border: 1px solid gray;
+}
+.margin {
   margin: 5px 20px 5px 0;
 }
 .addUser{
-  height: 300px;
-  width: 200px;
+  height: 393px;
+  width: 273px;
 }
 .relative {
   position: relative

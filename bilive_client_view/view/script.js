@@ -45,8 +45,6 @@ var App;
     function showLogin() {
         var _this = this;
         var loginDiv = document.querySelector('#login'), pathInput = loginDiv.querySelector('#path input'), protocolInput = loginDiv.querySelector('#protocol input'), connectInput = loginDiv.querySelector('#connect input'), connectSpan = loginDiv.querySelector('#connect span');
-        pathInput.defaultValue = 'ws://127.0.0.1:10080';
-        protocolInput.defaultValue = 'admin';
         connectInput.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
             var connected;
             return __generator(this, function (_a) {
@@ -118,7 +116,7 @@ var App;
     function showConfig() {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var configDiv, saveConfigInput, configMSG, config, configDF;
+            var configDiv, saveConfigInput, configMSG, config, configDF, logDiv, logMSG, logs, logDF;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -127,7 +125,7 @@ var App;
                     case 1:
                         configMSG = _a.sent(), config = configMSG.data, configDF = getConfigTemplate(config);
                         // 保存全局设置
-                        saveConfigInput.addEventListener('click', function () { return __awaiter(_this, void 0, void 0, function () {
+                        saveConfigInput.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                             var configMSG, configDF_1;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
@@ -146,8 +144,23 @@ var App;
                                         return [2 /*return*/];
                                 }
                             });
-                        }); });
+                        }); };
                         configDiv.appendChild(configDF);
+                        logDiv = document.querySelector('#log');
+                        return [4 /*yield*/, options.getLog()];
+                    case 2:
+                        logMSG = _a.sent(), logs = logMSG.data, logDF = document.createDocumentFragment();
+                        logs.forEach(function (log) {
+                            var div = document.createElement('div');
+                            div.innerText = log;
+                            logDF.appendChild(div);
+                        });
+                        options.onlog = function (data) {
+                            var div = document.createElement('div');
+                            div.innerText = data;
+                            logDiv.appendChild(div);
+                        };
+                        logDiv.appendChild(logDF);
                         return [2 /*return*/];
                 }
             });
@@ -183,7 +196,7 @@ var App;
                         return [3 /*break*/, 2];
                     case 5:
                         // 添加新用户
-                        addUserDiv.addEventListener('click', function () { return __awaiter(_this, void 0, void 0, function () {
+                        addUserDiv.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                             var userDataMSG, uid, userData, userDF;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
@@ -194,7 +207,7 @@ var App;
                                         return [2 /*return*/];
                                 }
                             });
-                        }); });
+                        }); };
                         userDiv.appendChild(df);
                         return [2 /*return*/];
                 }
@@ -213,7 +226,7 @@ var App;
         var userTemplate = template.querySelector('#userTemplate'), clone = document.importNode(userTemplate.content, true), userDataDiv = clone.querySelector('.userData'), userConfigDiv = clone.querySelector('.userConfig'), saveUserInput = clone.querySelector('.saveUser'), deleteUserInput = clone.querySelector('.deleteUser'), userConfigDF = getConfigTemplate(userData);
         userConfigDiv.appendChild(userConfigDF);
         // 保存用户设置
-        saveUserInput.addEventListener('click', function () { return __awaiter(_this, void 0, void 0, function () {
+        saveUserInput.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
             var userDataMSG, userConfigDF_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -232,9 +245,9 @@ var App;
                         return [2 /*return*/];
                 }
             });
-        }); });
+        }); };
         // 删除用户设置
-        deleteUserInput.addEventListener('click', function () { return __awaiter(_this, void 0, void 0, function () {
+        deleteUserInput.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
             var userDataMSG;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -250,7 +263,7 @@ var App;
                         return [2 /*return*/];
                 }
             });
-        }); });
+        }); };
         return clone;
     }
     /**
@@ -267,30 +280,30 @@ var App;
                 case 'number':
                     inputInput.type = 'text';
                     inputInput.value = configValue.toString();
-                    inputInput.addEventListener('input', function () {
+                    inputInput.oninput = function () {
                         config[key] = parseInt(inputInput.value);
-                    });
+                    };
                     break;
                 case 'numberArray':
                     inputInput.type = 'text';
                     inputInput.value = configValue.join(',');
-                    inputInput.addEventListener('input', function () {
+                    inputInput.oninput = function () {
                         config[key] = inputInput.value.split(',').map(function (value) { return parseInt(value); });
-                    });
+                    };
                     break;
                 case 'string':
                     inputInput.type = 'text';
                     inputInput.value = configValue;
-                    inputInput.addEventListener('input', function () {
+                    inputInput.oninput = function () {
                         config[key] = inputInput.value;
-                    });
+                    };
                     break;
                 case 'boolean':
                     inputInput.type = 'checkbox';
                     inputInput.checked = configValue;
-                    inputInput.addEventListener('change', function () {
+                    inputInput.onchange = function () {
                         config[key] = inputInput.checked;
-                    });
+                    };
                     break;
                 default:
                     break;

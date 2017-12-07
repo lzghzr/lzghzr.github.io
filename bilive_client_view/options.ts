@@ -93,6 +93,7 @@ namespace App {
           this.__callback[ts](message)
           delete this.__callback[ts]
         }
+        else if (message.cmd === 'log' && typeof this.onlog === 'function') this.onlog(<string>message.msg)
         else if (typeof this.onerror === 'function') this.onerror(data)
         else console.error(data)
       }
@@ -129,6 +130,12 @@ namespace App {
      */
     public onerror: (this: Options, data: MessageEvent) => void
     /**
+     * 服务器log
+     * 
+     * @memberof Options
+     */
+    public onlog: (this: Options, data: string) => void
+    /**
      * WebSocket错误消息
      * 
      * @memberof Options
@@ -148,6 +155,16 @@ namespace App {
     public close() {
       this._ws.close()
       this.__callback = {}
+    }
+    /**
+     * 获取Log
+     * 
+     * @returns {Promise<logMSG>} 
+     * @memberof Options
+     */
+    public getLog(): Promise<logMSG> {
+      let message = { cmd: 'getLog' }
+      return this._send<logMSG>(message)
     }
     /**
      * 获取设置
@@ -242,6 +259,9 @@ namespace App {
     ts?: string
     uid?: string
     data?: config | optionsInfo | string[] | userData
+  }
+  export interface logMSG extends message {
+    data: string[]
   }
   export interface configMSG extends message {
     data: config
