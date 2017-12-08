@@ -37,24 +37,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /// <reference path="options.ts" />
 var App;
 (function (App) {
-    var options = new App.Options(), optionsInfo, template = document.querySelector('#template');
+    var options = new App.Options(), optionsInfo, loginDiv = document.querySelector('#login'), optionDiv = document.querySelector('#option'), configDiv = document.querySelector('#config'), logDiv = document.querySelector('#log'), userDiv = document.querySelector('#user'), template = document.querySelector('#template');
     /**
      * 显示登录界面
      *
      */
     function showLogin() {
         var _this = this;
-        var loginDiv = document.querySelector('#login'), pathInput = loginDiv.querySelector('#path input'), protocolInput = loginDiv.querySelector('#protocol input'), connectInput = loginDiv.querySelector('#connect input'), connectSpan = loginDiv.querySelector('#connect span');
+        var pathInput = loginDiv.querySelector('#path input'), protocolInput = loginDiv.querySelector('#protocol input[type="text"]'), keepInput = loginDiv.querySelector('#protocol input[type="checkbox"]'), connectInput = loginDiv.querySelector('#connect input'), connectSpan = loginDiv.querySelector('#connect span');
         connectInput.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
-            var connected;
+            var protocols, connected;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, options.connect(pathInput.value, protocolInput.value)];
+                    case 0:
+                        protocols = [protocolInput.value];
+                        if (keepInput.checked)
+                            protocols.push('keep');
+                        return [4 /*yield*/, options.connect(pathInput.value, protocols)];
                     case 1:
                         connected = _a.sent();
                         if (connected) {
-                            pathInput.value = '';
-                            protocolInput.value = '';
                             loginDiv.classList.add('hide');
                             login();
                         }
@@ -72,12 +74,10 @@ var App;
      */
     function login() {
         return __awaiter(this, void 0, void 0, function () {
-            var optionDiv, infoMSG;
+            var infoMSG;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        optionDiv = document.querySelector('#option');
-                        return [4 /*yield*/, options.getInfo()];
+                    case 0: return [4 /*yield*/, options.getInfo()];
                     case 1:
                         infoMSG = _a.sent();
                         optionsInfo = infoMSG.data;
@@ -85,16 +85,14 @@ var App;
                         options.onerror = function (event) {
                             alert(event.data);
                         };
-                        options.onwserror = function () {
-                            document.body.innerText = 'connection error';
-                        };
+                        options.onwserror = function () { return wsClose('连接发生错误'); };
                         options.onwsclose = function (event) {
                             try {
                                 var msg = JSON.parse(event.reason);
-                                document.body.innerText = msg.msg;
+                                wsClose('连接已关闭 ' + msg.msg);
                             }
                             catch (error) {
-                                document.body.innerText = 'connection closed';
+                                wsClose('连接已关闭');
                             }
                         };
                         return [4 /*yield*/, showConfig()];
@@ -104,6 +102,7 @@ var App;
                     case 3:
                         _a.sent();
                         optionDiv.classList.remove('hide');
+                        showLog();
                         return [2 /*return*/];
                 }
             });
@@ -116,11 +115,11 @@ var App;
     function showConfig() {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var configDiv, saveConfigInput, configMSG, config, configDF, logDiv, logMSG, logs, logDF;
+            var saveConfigInput, configMSG, config, configDF;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        configDiv = document.querySelector('#config'), saveConfigInput = document.querySelector('#saveConfig');
+                        saveConfigInput = document.querySelector('#saveConfig');
                         return [4 /*yield*/, options.getConfig()];
                     case 1:
                         configMSG = _a.sent(), config = configMSG.data, configDF = getConfigTemplate(config);
@@ -146,9 +145,22 @@ var App;
                             });
                         }); };
                         configDiv.appendChild(configDF);
-                        logDiv = document.querySelector('#log');
-                        return [4 /*yield*/, options.getLog()];
-                    case 2:
+                        return [2 /*return*/];
+                }
+            });
+        });
+    }
+    /**
+     * 加载Log
+     *
+     */
+    function showLog() {
+        return __awaiter(this, void 0, void 0, function () {
+            var logMSG, logs, logDF;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, options.getLog()];
+                    case 1:
                         logMSG = _a.sent(), logs = logMSG.data, logDF = document.createDocumentFragment();
                         logs.forEach(function (log) {
                             var div = document.createElement('div');
@@ -173,11 +185,11 @@ var App;
     function showUser() {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var userDiv, addUserDiv, userMSG, uidArray, df, _i, uidArray_1, uid, userDataMSG, userData, userDF;
+            var addUserDiv, userMSG, uidArray, df, _i, uidArray_1, uid, userDataMSG, userData, userDF;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        userDiv = document.querySelector('#user'), addUserDiv = document.querySelector('#addUser');
+                        addUserDiv = document.querySelector('#addUser');
                         return [4 /*yield*/, options.getAllUID()];
                     case 1:
                         userMSG = _a.sent(), uidArray = userMSG.data, df = document.createDocumentFragment();
@@ -316,6 +328,20 @@ var App;
             _loop_1(key);
         }
         return df;
+    }
+    /**
+     * 处理连接中断
+     *
+     * @param {string} data
+     */
+    function wsClose(data) {
+        var connectSpan = loginDiv.querySelector('#connect span');
+        optionDiv.classList.add('hide');
+        configDiv.innerText = '';
+        logDiv.innerText = '';
+        userDiv.innerText = '';
+        connectSpan.innerText = data;
+        loginDiv.classList.remove('hide');
     }
     showLogin();
 })(App || (App = {}));

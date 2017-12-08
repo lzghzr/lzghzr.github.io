@@ -38,16 +38,15 @@ var App;
          * 连接到服务器
          *
          * @param {string} path
-         * @param {string} [protocol='']
+         * @param {string[]} protocols
          * @returns {Promise<boolean>}
          * @memberof Options
          */
-        Options.prototype.connect = function (path, protocol) {
+        Options.prototype.connect = function (path, protocols) {
             var _this = this;
-            if (protocol === void 0) { protocol = ''; }
             return new Promise(function (resolve) {
                 try {
-                    var ws_1 = new WebSocket(path, protocol), removeEvent_1 = function () {
+                    var ws_1 = new WebSocket(path, protocols), removeEvent_1 = function () {
                         delete ws_1.onopen;
                         delete ws_1.onerror;
                     };

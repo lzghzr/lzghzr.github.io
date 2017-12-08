@@ -2,22 +2,27 @@
 namespace App {
   let options = new App.Options()
     , optionsInfo: App.optionsInfo
+    , loginDiv = <HTMLDivElement>document.querySelector('#login')
+    , optionDiv = <HTMLDivElement>document.querySelector('#option')
+    , configDiv = <HTMLDivElement>document.querySelector('#config')
+    , logDiv = <HTMLDivElement>document.querySelector('#log')
+    , userDiv = <HTMLDivElement>document.querySelector('#user')
     , template = <HTMLDivElement>document.querySelector('#template')
   /**
    * 显示登录界面
    * 
    */
   function showLogin() {
-    let loginDiv = <HTMLDivElement>document.querySelector('#login')
-      , pathInput = <HTMLInputElement>loginDiv.querySelector('#path input')
-      , protocolInput = <HTMLInputElement>loginDiv.querySelector('#protocol input')
+    let pathInput = <HTMLInputElement>loginDiv.querySelector('#path input')
+      , protocolInput = <HTMLInputElement>loginDiv.querySelector('#protocol input[type="text"]')
+      , keepInput = <HTMLInputElement>loginDiv.querySelector('#protocol input[type="checkbox"]')
       , connectInput = <HTMLInputElement>loginDiv.querySelector('#connect input')
       , connectSpan = <HTMLSpanElement>loginDiv.querySelector('#connect span')
     connectInput.onclick = async () => {
-      let connected = await options.connect(pathInput.value, protocolInput.value)
+      let protocols = [protocolInput.value]
+      if (keepInput.checked) protocols.push('keep')
+      let connected = await options.connect(pathInput.value, protocols)
       if (connected) {
-        pathInput.value = ''
-        protocolInput.value = ''
         loginDiv.classList.add('hide')
         login()
       }
@@ -30,36 +35,32 @@ namespace App {
    * 
    */
   async function login() {
-    let optionDiv = <HTMLDivElement>document.querySelector('#option')
-      , infoMSG = await options.getInfo()
+    let infoMSG = await options.getInfo()
     optionsInfo = infoMSG.data
     // 处理错误信息
     options.onerror = (event) => {
       alert(event.data)
     }
-    options.onwserror = () => {
-      document.body.innerText = 'connection error'
-    }
+    options.onwserror = () => wsClose('连接发生错误')
     options.onwsclose = (event) => {
       try {
         let msg: message = JSON.parse(event.reason)
-        document.body.innerText = <string>msg.msg
+        wsClose('连接已关闭 ' + msg.msg)
       } catch (error) {
-        document.body.innerText = 'connection closed'
+        wsClose('连接已关闭')
       }
     }
     await showConfig()
     await showUser()
     optionDiv.classList.remove('hide')
+    showLog()
   }
   /**
    * 加载全局设置
    * 
    */
   async function showConfig() {
-    // 设置
-    let configDiv = <HTMLDivElement>document.querySelector('#config')
-      , saveConfigInput = <HTMLInputElement>document.querySelector('#saveConfig')
+    let saveConfigInput = <HTMLInputElement>document.querySelector('#saveConfig')
       , configMSG = await options.getConfig()
       , config = configMSG.data
       , configDF = getConfigTemplate(config)
@@ -76,9 +77,13 @@ namespace App {
       }
     }
     configDiv.appendChild(configDF)
-    // log
-    let logDiv = <HTMLDivElement>document.querySelector('#log')
-      , logMSG = await options.getLog()
+  }
+  /**
+   * 加载Log
+   * 
+   */
+  async function showLog() {
+    let logMSG = await options.getLog()
       , logs = logMSG.data
       , logDF = document.createDocumentFragment()
     logs.forEach(log => {
@@ -98,8 +103,7 @@ namespace App {
    * 
    */
   async function showUser() {
-    let userDiv = <HTMLDivElement>document.querySelector('#user')
-      , addUserDiv = <HTMLInputElement>document.querySelector('#addUser')
+    let addUserDiv = <HTMLInputElement>document.querySelector('#addUser')
       , userMSG = await options.getAllUID()
       , uidArray = userMSG.data
       , df = document.createDocumentFragment()
@@ -211,6 +215,20 @@ namespace App {
       df.appendChild(clone)
     }
     return df
+  }
+  /**
+   * 处理连接中断
+   * 
+   * @param {string} data 
+   */
+  function wsClose(data: string) {
+    let connectSpan = <HTMLSpanElement>loginDiv.querySelector('#connect span')
+    optionDiv.classList.add('hide')
+    configDiv.innerText = ''
+    logDiv.innerText = ''
+    userDiv.innerText = ''
+    connectSpan.innerText = data
+    loginDiv.classList.remove('hide')
   }
   showLogin()
 }

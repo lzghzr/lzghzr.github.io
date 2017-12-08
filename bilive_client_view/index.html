@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <title>bilive_client</title>
   <link rel="stylesheet" type="text/css" href="./view/style.css">
-  <script async type="text/javascript" src="./view/options.js"></script>
-  <script async type="text/javascript" src="./view/script.js"></script>
+  <script defer type="text/javascript" src="./view/options.js"></script>
+  <script defer type="text/javascript" src="./view/script.js"></script>
 </head>
 
 <body>
@@ -19,6 +19,8 @@
     <div id="protocol">
       <span>protocol:</span>
       <input type="text" name="protocol" value="admin">
+      <input type="checkbox" name="keep">
+      <span>保持连接</span>
     </div>
     <div id="connect">
       <input type="button" value="连接">

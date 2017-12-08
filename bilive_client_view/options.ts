@@ -41,14 +41,14 @@ namespace App {
      * 连接到服务器
      * 
      * @param {string} path 
-     * @param {string} [protocol=''] 
+     * @param {string[]} protocols
      * @returns {Promise<boolean>} 
      * @memberof Options
      */
-    public connect(path: string, protocol = ''): Promise<boolean> {
+    public connect(path: string, protocols: string[]): Promise<boolean> {
       return new Promise(resolve => {
         try {
-          let ws = new WebSocket(path, protocol)
+          let ws = new WebSocket(path, protocols)
             , removeEvent = () => {
               delete ws.onopen
               delete ws.onerror
