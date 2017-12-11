@@ -1,46 +1,11 @@
-.hide {
-  display: none
-}
-.inline {
-  display: inline
-}
-.description + .tip {
-  display: none;
-  position: absolute;
-  margin: 20px 0;
-  left: 20px;
-  background: lightgrey;
+._description + ._tip {
   z-index: 11
 }
-.description:hover + .tip {
-  display: inline
+._description:hover + ._tip {
+  display: inline !important;
 }
-.config {
-  width: 400px;
-}
-#log {
-  height: 170px;
-  overflow: auto;
-  margin: -170px 0px 0px 410px;
-}
-.floatLeft {
-  float: left;
-}
-.border {
-  border: 1px solid gray;
-}
-.margin {
-  margin: 5px 20px 5px 0;
-}
-.addUser{
-  height: 393px;
-  width: 273px;
-}
-.relative {
-  position: relative
-}
-.delete {
-  position: absolute;
-  margin: -10px 0 0 210px;
-  z-index: 10;
-}
+/*
+  transform: perspective(1000px) rotateY(10deg);
+  transform-origin: left;
+  background: grey;
+*/
