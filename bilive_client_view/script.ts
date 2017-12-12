@@ -185,8 +185,9 @@ function getUserDF(uid: string, userData: userData): DocumentFragment {
 function getConfigTemplate(config: config | userData): DocumentFragment {
   let df = document.createDocumentFragment()
   for (let key in config) {
-    let info = optionsInfo[key] || {}
-      , configValue = config[key]
+    let info = optionsInfo[key]
+    if (info == null) continue
+    let configValue = config[key]
       , configTemplate: HTMLTemplateElement
     if (info.type === 'boolean') configTemplate = <HTMLTemplateElement>template.querySelector('#configCheckboxTemplate')
     else configTemplate = <HTMLTemplateElement>template.querySelector('#configTextTemplate')

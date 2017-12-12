@@ -295,7 +295,10 @@ function getUserDF(uid, userData) {
 function getConfigTemplate(config) {
     var df = document.createDocumentFragment();
     var _loop_1 = function (key) {
-        var info = optionsInfo[key] || {}, configValue = config[key], configTemplate = void 0;
+        var info = optionsInfo[key];
+        if (info == null)
+            return "continue";
+        var configValue = config[key], configTemplate = void 0;
         if (info.type === 'boolean')
             configTemplate = template.querySelector('#configCheckboxTemplate');
         else
