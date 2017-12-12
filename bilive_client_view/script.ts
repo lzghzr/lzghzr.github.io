@@ -1,11 +1,81 @@
 let options = new Options()
   , optionsInfo: optionsInfo
+  , dDiv = <HTMLDivElement>document.querySelector('#ddd')
   , loginDiv = <HTMLDivElement>document.querySelector('#login')
   , optionDiv = <HTMLDivElement>document.querySelector('#option')
   , configDiv = <HTMLDivElement>document.querySelector('#config')
   , logDiv = <HTMLDivElement>document.querySelector('#log')
   , userDiv = <HTMLDivElement>document.querySelector('#user')
   , template = <HTMLDivElement>document.querySelector('#template')
+  // 3D效果
+  , current: 'login' | 'option' | 'log' = 'login'
+dDiv.addEventListener('animationstart', event => {
+  switch (event.animationName) {
+    case 'login_to_option':
+      loginDiv.style.cssText = ''
+      optionDiv.classList.remove('d-none')
+      logDiv.classList.remove('d-none')
+      break
+    case 'option_to_log':
+      optionDiv.style.cssText = ''
+      loginDiv.classList.remove('d-none')
+      logDiv.classList.remove('d-none')
+      break
+    case 'log_to_option':
+      logDiv.style.cssText = ''
+      loginDiv.classList.remove('d-none')
+      optionDiv.classList.remove('d-none')
+      break
+    case 'option_to_login':
+      optionDiv.style.cssText = ''
+      loginDiv.classList.remove('d-none')
+      logDiv.classList.remove('d-none')
+      break
+    case 'log_to_login':
+      logDiv.style.cssText = ''
+      loginDiv.classList.remove('d-none')
+      optionDiv.classList.remove('d-none')
+      break
+    default:
+      break
+  }
+})
+dDiv.addEventListener('animationend', event => {
+  switch (event.animationName) {
+    case 'login_to_option':
+      loginDiv.classList.add('d-none')
+      logDiv.classList.add('d-none')
+      optionDiv.style.cssText = 'transform: rotateY(90deg);'
+      current = 'option'
+      break
+    case 'option_to_log':
+      loginDiv.classList.add('d-none')
+      optionDiv.classList.add('d-none')
+      logDiv.style.cssText = 'transform: rotateY(180deg);'
+      current = 'log'
+      break
+    case 'log_to_option':
+      loginDiv.classList.add('d-none')
+      logDiv.classList.add('d-none')
+      optionDiv.style.cssText = 'transform: rotateY(90deg);'
+      current = 'option'
+      break
+    case 'option_to_login':
+      optionDiv.classList.add('d-none')
+      logDiv.classList.add('d-none')
+      loginDiv.style.cssText = 'transform: rotateY(0deg);'
+      current = 'login'
+      break
+    case 'log_to_login':
+      optionDiv.classList.add('d-none')
+      logDiv.classList.add('d-none')
+      loginDiv.style.cssText = 'transform: rotateY(0deg);'
+      current = 'login'
+      break
+    default:
+      break
+  }
+})
 /**
  * 显示登录界面
  * 
@@ -20,12 +90,10 @@ function showLogin() {
     let protocols = [protocolInput.value]
     if (keepInput.checked) protocols.push('keep')
     let connected = await options.connect(pathInput.value, protocols)
-    if (connected) {
-      loginDiv.classList.add('d-none')
-      login()
-    }
+    if (connected) login()
     else connectSpan.innerText = '连接失败'
   }
+  loginDiv.style.cssText = 'transform: rotateY(0deg);'
   loginDiv.classList.remove('d-none')
 }
 /**
@@ -50,7 +118,7 @@ async function login() {
   }
   await showConfig()
   await showUser()
-  optionDiv.classList.remove('d-none')
+  dDiv.className = 'login_to_option'
   showLog()
 }
 /**
@@ -86,8 +154,7 @@ async function showConfig() {
   }
   // 显示日志
   showLogButton.onclick = () => {
-    optionDiv.classList.add('d-none')
-    logDiv.classList.remove('d-none')
+    dDiv.className = 'option_to_log'
   }
   configDiv.appendChild(configDF)
 }
@@ -114,8 +181,7 @@ async function showLog() {
     setTimeout(() => double = 0, 500)
     double += 1
     if (double > 1) {
-      logDiv.classList.add('d-none')
-      optionDiv.classList.remove('d-none')
+      dDiv.className = 'log_to_option'
       double = 0
     }
   }
@@ -229,12 +295,11 @@ function getConfigTemplate(config: config | userData): DocumentFragment {
  */
 function wsClose(data: string) {
   let connectSpan = <HTMLSpanElement>loginDiv.querySelector('#connect span')
-  optionDiv.classList.add('d-none')
-  logDiv.classList.add('d-none')
   configDiv.innerText = ''
   logDiv.innerText = ''
   userDiv.innerText = ''
   connectSpan.innerText = data
-  loginDiv.classList.remove('d-none')
+  if (current === 'option') dDiv.className = 'option_to_login'
+  else dDiv.className = 'log_to_login'
 }
 showLogin()

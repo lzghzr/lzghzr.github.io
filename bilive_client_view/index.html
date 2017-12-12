@@ -7,8 +7,7 @@
 
   <title>bilive_client</title>
 
-  <link rel="stylesheet" href="//code.z01.com/v4/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="//code.z01.com/boot/dist/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="./view/style.css">
 
   <script defer type="text/javascript" src="./view/options.js"></script>
@@ -16,68 +15,80 @@
 </head>
 
 <body>
-  <!-- 登录界面 -->
-  <div id="login" class="container d-none">
-    <div class="row justify-content-center">
-      <div id="path" class="col-md-6 input-group mt-2">
-        <span class="input-group-addon">地址</span>
-        <input type="text" class="form-control" value="ws://127.0.0.1:10080">
-      </div>
-      <div class="w-100"></div>
-      <div id="protocol" class="col-md-6 input-group mt-1">
-        <span class="input-group-addon">protocol</span>
-        <input type="text" class="form-control" value="admin">
-        <label class="input-group-addon pl-4">
-          <input type="checkbox" class="form-check-input">
-          <span>保持连接</span>
-        </label>
-      </div>
-      <div class="w-100"></div>
-      <div id="connect" class="col-md-6 mt-1">
-        <button type="button" class="btn btn-primary">连接</button>
-        <span></span>
+  <div id="ddd">
+    <!-- 登录界面 -->
+    <div id="login" class="container-fluid position-absolute d-none">
+      <div class="row align-items-center justify-content-center" style="height: 100vh;">
+        <div class="col-md-6">
+          <div class="card border-primary">
+            <div class="card-header">
+              <h1>
+                <span>Bilive Client</span>
+                <iframe src="https://ghbtns.com/github-btn.html?user=lzghzr&amp;repo=bilive_client&amp;type=star&amp;count=true&amp;size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+              </h1>
+            </div>
+            <div class="card-body">
+              <div id="path" class="input-group mt-2">
+                <span class="input-group-addon">地址</span>
+                <input type="text" class="form-control" value="ws://localhost:10080">
+              </div>
+              <div id="protocol" class="input-group mt-1">
+                <span class="input-group-addon">protocol</span>
+                <input type="text" class="form-control" value="admin">
+                <label class="input-group-addon pl-4">
+                  <input type="checkbox" class="form-check-input">
+                  <span>保持连接</span>
+                </label>
+              </div>
+            </div>
+            <div id="connect" class="card-footer">
+              <button type="button" class="btn btn-primary">连接</button>
+              <span></span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <!-- 设置界面 -->
-  <div id="option" class="container d-none">
-    <div class="row justify-content-center">
-      <div class="col-md-8 p-2 m-2 border border-primary rounded">
-        <div id="config"></div>
-        <button type="button" id="saveConfig" class="btn btn-primary">保存设置</button>
-        <button type="button" id="addUser" class="btn btn-primary">添加用户</button>
-        <button type="button" id="showLog" class="btn btn-primary">显示日志</button>
+    <!-- 设置界面 -->
+    <div id="option" class="container-fluid position-absolute d-none">
+      <div class="row justify-content-center">
+        <div class="col-md-8 p-2 m-2 border border-primary rounded">
+          <div id="config"></div>
+          <button type="button" id="saveConfig" class="btn btn-primary">保存设置</button>
+          <button type="button" id="addUser" class="btn btn-primary">添加用户</button>
+          <button type="button" id="showLog" class="btn btn-primary">显示日志</button>
+        </div>
       </div>
+      <div id="user" class="row"></div>
     </div>
-    <div id="user" class="row"></div>
-  </div>
-  <!-- 日志 -->
-  <div id="log" class="container-fluid d-none"></div>
-  <!-- 模板 -->
-  <div id="template" class="d-none">
-    <template id="configTextTemplate">
-      <div class="input-group mb-1">
-        <span class="input-group-addon _description"></span>
-        <span class="d-none position-absolute ml-4 mt-5 alert alert-primary text-nowrap _tip"></span>
-        <input type="text" class="form-control">
-      </div>
-    </template>
-    <template id="configCheckboxTemplate">
-      <div class="mb-1">
-        <label class="form-check-label">
-          <input type="checkbox" class="form-check-input">
-          <span class="_description"></span>
-          <span class="d-none position-absolute ml-4 alert alert-primary text-nowrap _tip"></span>
-        </label>
-      </div>
-    </template>
-    <template id="userTemplate">
-      <div class="col-md-3 py-3 mb-2 border border-primary rounded userData">
-        <div class="userConfig"></div>
-        <button type="button" class="btn btn-primary saveUser">保存</button>
-        <button type="button" class="btn btn-primary deleteUser">删除</button>
-      </div>
-    </template>
+    <!-- 日志 -->
+    <div id="log" class="container-fluid position-absolute d-none"></div>
+    <!-- 模板 -->
+    <div id="template" class="d-none">
+      <template id="configTextTemplate">
+        <div class="input-group mb-1">
+          <span class="input-group-addon _description"></span>
+          <span class="d-none position-absolute ml-4 mt-5 alert alert-primary text-nowrap _tip"></span>
+          <input type="text" class="form-control">
+        </div>
+      </template>
+      <template id="configCheckboxTemplate">
+        <div class="mb-1">
+          <label class="form-check-label">
+            <input type="checkbox" class="form-check-input">
+            <span class="_description"></span>
+            <span class="d-none position-absolute ml-4 alert alert-primary text-nowrap _tip"></span>
+          </label>
+        </div>
+      </template>
+      <template id="userTemplate">
+        <div class="col-md-3 py-3 mb-2 border border-primary rounded userData">
+          <div class="userConfig"></div>
+          <button type="button" class="btn btn-primary saveUser">保存</button>
+          <button type="button" class="btn btn-primary deleteUser">删除</button>
+        </div>
+      </template>
+    </div>
   </div>
 </body>
 

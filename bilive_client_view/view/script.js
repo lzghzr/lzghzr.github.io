@@ -34,7 +34,76 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var options = new Options(), optionsInfo, loginDiv = document.querySelector('#login'), optionDiv = document.querySelector('#option'), configDiv = document.querySelector('#config'), logDiv = document.querySelector('#log'), userDiv = document.querySelector('#user'), template = document.querySelector('#template');
+var options = new Options(), optionsInfo, dDiv = document.querySelector('#ddd'), loginDiv = document.querySelector('#login'), optionDiv = document.querySelector('#option'), configDiv = document.querySelector('#config'), logDiv = document.querySelector('#log'), userDiv = document.querySelector('#user'), template = document.querySelector('#template')
+// 3D效果
+, current = 'login';
+dDiv.addEventListener('animationstart', function (event) {
+    switch (event.animationName) {
+        case 'login_to_option':
+            loginDiv.style.cssText = '';
+            optionDiv.classList.remove('d-none');
+            logDiv.classList.remove('d-none');
+            break;
+        case 'option_to_log':
+            optionDiv.style.cssText = '';
+            loginDiv.classList.remove('d-none');
+            logDiv.classList.remove('d-none');
+            break;
+        case 'log_to_option':
+            logDiv.style.cssText = '';
+            loginDiv.classList.remove('d-none');
+            optionDiv.classList.remove('d-none');
+            break;
+        case 'option_to_login':
+            optionDiv.style.cssText = '';
+            loginDiv.classList.remove('d-none');
+            logDiv.classList.remove('d-none');
+            break;
+        case 'log_to_login':
+            logDiv.style.cssText = '';
+            loginDiv.classList.remove('d-none');
+            optionDiv.classList.remove('d-none');
+            break;
+        default:
+            break;
+    }
+});
+dDiv.addEventListener('animationend', function (event) {
+    switch (event.animationName) {
+        case 'login_to_option':
+            loginDiv.classList.add('d-none');
+            logDiv.classList.add('d-none');
+            optionDiv.style.cssText = 'transform: rotateY(90deg);';
+            current = 'option';
+            break;
+        case 'option_to_log':
+            loginDiv.classList.add('d-none');
+            optionDiv.classList.add('d-none');
+            logDiv.style.cssText = 'transform: rotateY(180deg);';
+            current = 'log';
+            break;
+        case 'log_to_option':
+            loginDiv.classList.add('d-none');
+            logDiv.classList.add('d-none');
+            optionDiv.style.cssText = 'transform: rotateY(90deg);';
+            current = 'option';
+            break;
+        case 'option_to_login':
+            optionDiv.classList.add('d-none');
+            logDiv.classList.add('d-none');
+            loginDiv.style.cssText = 'transform: rotateY(0deg);';
+            current = 'login';
+            break;
+        case 'log_to_login':
+            optionDiv.classList.add('d-none');
+            logDiv.classList.add('d-none');
+            loginDiv.style.cssText = 'transform: rotateY(0deg);';
+            current = 'login';
+            break;
+        default:
+            break;
+    }
+});
 /**
  * 显示登录界面
  *
@@ -53,16 +122,15 @@ function showLogin() {
                     return [4 /*yield*/, options.connect(pathInput.value, protocols)];
                 case 1:
                     connected = _a.sent();
-                    if (connected) {
-                        loginDiv.classList.add('d-none');
+                    if (connected)
                         login();
-                    }
                     else
                         connectSpan.innerText = '连接失败';
                     return [2 /*return*/];
             }
         });
     }); };
+    loginDiv.style.cssText = 'transform: rotateY(0deg);';
     loginDiv.classList.remove('d-none');
 }
 /**
@@ -98,7 +166,7 @@ function login() {
                     return [4 /*yield*/, showUser()];
                 case 3:
                     _a.sent();
-                    optionDiv.classList.remove('d-none');
+                    dDiv.className = 'login_to_option';
                     showLog();
                     return [2 /*return*/];
             }
@@ -156,8 +224,7 @@ function showConfig() {
                     }); };
                     // 显示日志
                     showLogButton.onclick = function () {
-                        optionDiv.classList.add('d-none');
-                        logDiv.classList.remove('d-none');
+                        dDiv.className = 'option_to_log';
                     };
                     configDiv.appendChild(configDF);
                     return [2 /*return*/];
@@ -191,8 +258,7 @@ function showLog() {
                         setTimeout(function () { return double = 0; }, 500);
                         double += 1;
                         if (double > 1) {
-                            logDiv.classList.add('d-none');
-                            optionDiv.classList.remove('d-none');
+                            dDiv.className = 'log_to_option';
                             double = 0;
                         }
                     };
@@ -341,12 +407,13 @@ function getConfigTemplate(config) {
  */
 function wsClose(data) {
     var connectSpan = loginDiv.querySelector('#connect span');
-    optionDiv.classList.add('d-none');
-    logDiv.classList.add('d-none');
     configDiv.innerText = '';
     logDiv.innerText = '';
     userDiv.innerText = '';
     connectSpan.innerText = data;
-    loginDiv.classList.remove('d-none');
+    if (current === 'option')
+        dDiv.className = 'option_to_login';
+    else
+        dDiv.className = 'log_to_login';
 }
 showLogin();
