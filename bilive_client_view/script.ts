@@ -4,14 +4,17 @@ let options = new Options()
   , loginDiv = <HTMLDivElement>document.querySelector('#login')
   , optionDiv = <HTMLDivElement>document.querySelector('#option')
   , configDiv = <HTMLDivElement>document.querySelector('#config')
-  , logDiv = <HTMLDivElement>document.querySelector('#log')
   , userDiv = <HTMLDivElement>document.querySelector('#user')
+  , logDiv = <HTMLDivElement>document.querySelector('#log')
+  , returnButton = <HTMLElement>document.querySelector('#logreturn')
   , template = <HTMLDivElement>document.querySelector('#template')
   // 3D效果
   , current: 'login' | 'option' | 'log' = 'login'
-dDiv.addEventListener('animationstart', event => {
-  animationStart()
-  switch (event.animationName) {
+function danimation(name: string) {
+  loginDiv.classList.remove('d-none')
+  optionDiv.classList.remove('d-none')
+  logDiv.classList.remove('d-none')
+  switch (name) {
     case 'login_to_option':
       loginDiv.style.cssText = ''
       break
@@ -30,9 +33,12 @@ dDiv.addEventListener('animationstart', event => {
     default:
       break
   }
-})
+  dDiv.className = name
+}
 dDiv.addEventListener('animationend', event => {
-  animationEnd()
+  loginDiv.classList.add('d-none')
+  optionDiv.classList.add('d-none')
+  logDiv.classList.add('d-none')
   switch (event.animationName) {
     case 'login_to_option':
       optionDiv.classList.remove('d-none')
@@ -62,23 +68,8 @@ dDiv.addEventListener('animationend', event => {
     default:
       break
   }
+  if (current === 'log') returnButton.classList.remove('d-none')
 })
-function animationStart() {
-  loginDiv.classList.remove('d-none')
-  optionDiv.classList.remove('d-none')
-  logDiv.classList.remove('d-none')
-  loginDiv.classList.add('position-absolute')
-  optionDiv.classList.add('position-absolute')
-  logDiv.classList.add('position-absolute')
-}
-function animationEnd() {
-  loginDiv.classList.add('d-none')
-  optionDiv.classList.add('d-none')
-  logDiv.classList.add('d-none')
-  loginDiv.classList.remove('position-absolute')
-  optionDiv.classList.remove('position-absolute')
-  logDiv.classList.remove('position-absolute')
-}
 /**
  * 显示登录界面
  * 
@@ -119,9 +110,9 @@ async function login() {
       wsClose('连接已关闭')
     }
   }
+  danimation('login_to_option')
   await showConfig()
   await showUser()
-  dDiv.className = 'login_to_option'
   showLog()
 }
 /**
@@ -157,7 +148,7 @@ async function showConfig() {
   }
   // 显示日志
   showLogButton.onclick = () => {
-    dDiv.className = 'option_to_log'
+    danimation('option_to_log')
   }
   configDiv.appendChild(configDF)
 }
@@ -169,7 +160,6 @@ async function showLog() {
   let logMSG = await options.getLog()
     , logs = logMSG.data
     , logDF = document.createDocumentFragment()
-    , double = 0
   logs.forEach(log => {
     let div = document.createElement('div')
     div.innerText = log
@@ -180,13 +170,9 @@ async function showLog() {
     div.innerText = data
     logDiv.appendChild(div)
   }
-  logDiv.onclick = () => {
-    setTimeout(() => double = 0, 500)
-    double += 1
-    if (double > 1) {
-      dDiv.className = 'log_to_option'
-      double = 0
-    }
+  returnButton.onclick = () => {
+    returnButton.classList.add('d-none')
+    danimation('log_to_option')
   }
   logDiv.appendChild(logDF)
 }
@@ -302,7 +288,7 @@ function wsClose(data: string) {
   logDiv.innerText = ''
   userDiv.innerText = ''
   connectSpan.innerText = data
-  if (current === 'option') dDiv.className = 'option_to_login'
-  else dDiv.className = 'log_to_login'
+  if (current === 'option') danimation('option_to_login')
+  else danimation('log_to_login')
 }
 showLogin()

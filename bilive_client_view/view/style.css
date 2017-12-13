@@ -4,8 +4,12 @@ body {
 }
 #login, #option, #log {
   background-color: #f8f9fa;
-  min-height: 100vh;
+  height: 100vh;
   overflow-x: hidden;
+}
+#logreturn {
+  left: calc(100vw - 8rem);
+  top: calc(100vh - 5rem);
 }
 ._description + ._tip {
   z-index: 11;
@@ -27,23 +31,23 @@ body {
   transform: rotateY(180deg) translateZ(50vw);
 }
 .login_to_option {
-  animation: login_to_option 3s;
+  animation: login_to_option 2s;
   transform: rotateY(-90deg);
 }
 .option_to_log {
-  animation: option_to_log 3s;
+  animation: option_to_log 2s;
   transform: rotateY(-180deg);
 }
 .log_to_option {
-  animation: log_to_option 3s;
+  animation: log_to_option 2s;
   transform: rotateY(-90deg);
 }
 .option_to_login {
-  animation: option_to_login 3s;
+  animation: option_to_login 2s;
   transform: rotateY(0deg);
 }
 .log_to_login {
-  animation: log_to_login 3s;
+  animation: log_to_login 2s;
   transform: rotateY(0deg);
 }
 @keyframes login_to_option {

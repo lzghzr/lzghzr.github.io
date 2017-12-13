@@ -34,12 +34,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var options = new Options(), optionsInfo, dDiv = document.querySelector('#ddd'), loginDiv = document.querySelector('#login'), optionDiv = document.querySelector('#option'), configDiv = document.querySelector('#config'), logDiv = document.querySelector('#log'), userDiv = document.querySelector('#user'), template = document.querySelector('#template')
+var options = new Options(), optionsInfo, dDiv = document.querySelector('#ddd'), loginDiv = document.querySelector('#login'), optionDiv = document.querySelector('#option'), configDiv = document.querySelector('#config'), userDiv = document.querySelector('#user'), logDiv = document.querySelector('#log'), returnButton = document.querySelector('#logreturn'), template = document.querySelector('#template')
 // 3D效果
 , current = 'login';
-dDiv.addEventListener('animationstart', function (event) {
-    animationStart();
-    switch (event.animationName) {
+function danimation(name) {
+    loginDiv.classList.remove('d-none');
+    optionDiv.classList.remove('d-none');
+    logDiv.classList.remove('d-none');
+    switch (name) {
         case 'login_to_option':
             loginDiv.style.cssText = '';
             break;
@@ -58,9 +60,12 @@ dDiv.addEventListener('animationstart', function (event) {
         default:
             break;
     }
-});
+    dDiv.className = name;
+}
 dDiv.addEventListener('animationend', function (event) {
-    animationEnd();
+    loginDiv.classList.add('d-none');
+    optionDiv.classList.add('d-none');
+    logDiv.classList.add('d-none');
     switch (event.animationName) {
         case 'login_to_option':
             optionDiv.classList.remove('d-none');
@@ -90,23 +95,9 @@ dDiv.addEventListener('animationend', function (event) {
         default:
             break;
     }
+    if (current === 'log')
+        returnButton.classList.remove('d-none');
 });
-function animationStart() {
-    loginDiv.classList.remove('d-none');
-    optionDiv.classList.remove('d-none');
-    logDiv.classList.remove('d-none');
-    loginDiv.classList.add('position-absolute');
-    optionDiv.classList.add('position-absolute');
-    logDiv.classList.add('position-absolute');
-}
-function animationEnd() {
-    loginDiv.classList.add('d-none');
-    optionDiv.classList.add('d-none');
-    logDiv.classList.add('d-none');
-    loginDiv.classList.remove('position-absolute');
-    optionDiv.classList.remove('position-absolute');
-    logDiv.classList.remove('position-absolute');
-}
 /**
  * 显示登录界面
  *
@@ -163,13 +154,13 @@ function login() {
                             wsClose('连接已关闭');
                         }
                     };
+                    danimation('login_to_option');
                     return [4 /*yield*/, showConfig()];
                 case 2:
                     _a.sent();
                     return [4 /*yield*/, showUser()];
                 case 3:
                     _a.sent();
-                    dDiv.className = 'login_to_option';
                     showLog();
                     return [2 /*return*/];
             }
@@ -227,7 +218,7 @@ function showConfig() {
                     }); };
                     // 显示日志
                     showLogButton.onclick = function () {
-                        dDiv.className = 'option_to_log';
+                        danimation('option_to_log');
                     };
                     configDiv.appendChild(configDF);
                     return [2 /*return*/];
@@ -241,12 +232,12 @@ function showConfig() {
  */
 function showLog() {
     return __awaiter(this, void 0, void 0, function () {
-        var logMSG, logs, logDF, double;
+        var logMSG, logs, logDF;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, options.getLog()];
                 case 1:
-                    logMSG = _a.sent(), logs = logMSG.data, logDF = document.createDocumentFragment(), double = 0;
+                    logMSG = _a.sent(), logs = logMSG.data, logDF = document.createDocumentFragment();
                     logs.forEach(function (log) {
                         var div = document.createElement('div');
                         div.innerText = log;
@@ -257,13 +248,9 @@ function showLog() {
                         div.innerText = data;
                         logDiv.appendChild(div);
                     };
-                    logDiv.onclick = function () {
-                        setTimeout(function () { return double = 0; }, 500);
-                        double += 1;
-                        if (double > 1) {
-                            dDiv.className = 'log_to_option';
-                            double = 0;
-                        }
+                    returnButton.onclick = function () {
+                        returnButton.classList.add('d-none');
+                        danimation('log_to_option');
                     };
                     logDiv.appendChild(logDF);
                     return [2 /*return*/];
@@ -415,8 +402,8 @@ function wsClose(data) {
     userDiv.innerText = '';
     connectSpan.innerText = data;
     if (current === 'option')
-        dDiv.className = 'option_to_login';
+        danimation('option_to_login');
     else
-        dDiv.className = 'log_to_login';
+        danimation('log_to_login');
 }
 showLogin();
