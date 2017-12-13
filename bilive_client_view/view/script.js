@@ -38,9 +38,19 @@ var options = new Options(), optionsInfo, dDiv = document.querySelector('#ddd'),
 // 3D效果
 , current = 'login';
 function danimation(name) {
-    loginDiv.classList.remove('d-none');
-    optionDiv.classList.remove('d-none');
-    logDiv.classList.remove('d-none');
+    if (current === 'login') {
+        optionDiv.classList.remove('d-none');
+        logDiv.classList.remove('d-none');
+    }
+    else if (current === 'option') {
+        loginDiv.classList.remove('d-none');
+        logDiv.classList.remove('d-none');
+    }
+    else if (current === 'log') {
+        loginDiv.classList.remove('d-none');
+        optionDiv.classList.remove('d-none');
+        returnButton.classList.add('d-none');
+    }
     switch (name) {
         case 'login_to_option':
             loginDiv.style.cssText = '';
@@ -63,40 +73,43 @@ function danimation(name) {
     dDiv.className = name;
 }
 dDiv.addEventListener('animationend', function (event) {
-    loginDiv.classList.add('d-none');
-    optionDiv.classList.add('d-none');
-    logDiv.classList.add('d-none');
     switch (event.animationName) {
         case 'login_to_option':
-            optionDiv.classList.remove('d-none');
             optionDiv.style.cssText = 'transform: rotateY(90deg);';
             current = 'option';
             break;
         case 'option_to_log':
-            logDiv.classList.remove('d-none');
             logDiv.style.cssText = 'transform: rotateY(180deg);';
             current = 'log';
             break;
         case 'log_to_option':
-            optionDiv.classList.remove('d-none');
             optionDiv.style.cssText = 'transform: rotateY(90deg);';
             current = 'option';
             break;
         case 'option_to_login':
-            loginDiv.classList.remove('d-none');
             loginDiv.style.cssText = 'transform: rotateY(0deg);';
             current = 'login';
             break;
         case 'log_to_login':
-            loginDiv.classList.remove('d-none');
             loginDiv.style.cssText = 'transform: rotateY(0deg);';
             current = 'login';
             break;
         default:
             break;
     }
-    if (current === 'log')
+    if (current === 'login') {
+        optionDiv.classList.add('d-none');
+        logDiv.classList.add('d-none');
+    }
+    else if (current === 'option') {
+        loginDiv.classList.add('d-none');
+        logDiv.classList.add('d-none');
+    }
+    else if (current === 'log') {
+        loginDiv.classList.add('d-none');
+        optionDiv.classList.add('d-none');
         returnButton.classList.remove('d-none');
+    }
 });
 /**
  * 显示登录界面
@@ -249,7 +262,6 @@ function showLog() {
                         logDiv.appendChild(div);
                     };
                     returnButton.onclick = function () {
-                        returnButton.classList.add('d-none');
                         danimation('log_to_option');
                     };
                     logDiv.appendChild(logDF);
