@@ -260,6 +260,8 @@ function showLog() {
                         var div = document.createElement('div');
                         div.innerText = data;
                         logDiv.appendChild(div);
+                        if (logDiv.scrollHeight - logDiv.clientHeight - logDiv.scrollTop < 2 * div.offsetHeight)
+                            logDiv.scrollTop = logDiv.scrollHeight;
                     };
                     returnButton.onclick = function () {
                         danimation('log_to_option');

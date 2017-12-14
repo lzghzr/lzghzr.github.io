@@ -183,6 +183,7 @@ async function showLog() {
     let div = document.createElement('div')
     div.innerText = data
     logDiv.appendChild(div)
+    if (logDiv.scrollHeight - logDiv.clientHeight - logDiv.scrollTop < 2 * div.offsetHeight) logDiv.scrollTop = logDiv.scrollHeight
   }
   returnButton.onclick = () => {
     danimation('log_to_option')
