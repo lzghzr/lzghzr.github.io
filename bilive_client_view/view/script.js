@@ -420,4 +420,5 @@ function wsClose(data) {
     else
         danimation('log_to_login');
 }
+window.onunload = function () { options.close(); };
 showLogin();

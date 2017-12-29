@@ -305,4 +305,5 @@ function wsClose(data: string) {
   if (current === 'option') danimation('option_to_login')
   else danimation('log_to_login')
 }
+window.onunload = () => { options.close() }
 showLogin()
