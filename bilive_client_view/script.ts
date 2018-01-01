@@ -7,6 +7,7 @@ let options = new Options()
   , userDiv = <HTMLDivElement>document.querySelector('#user')
   , logDiv = <HTMLDivElement>document.querySelector('#log')
   , returnButton = <HTMLElement>document.querySelector('#logreturn')
+  , modalDiv = <HTMLDivElement>document.querySelector('.modal')
   , template = <HTMLDivElement>document.querySelector('#template')
   // 3D效果
   , current: 'login' | 'option' | 'log' = 'login'
@@ -46,7 +47,7 @@ function danimation(name: string) {
   dDiv.className = name
 }
 dDiv.addEventListener('animationend', event => {
-  switch (event.animationName) {
+  switch ((<any>event).animationName) {
     case 'login_to_option':
       optionDiv.style.cssText = 'transform: rotateY(90deg);'
       current = 'option'
@@ -113,7 +114,7 @@ async function login() {
   optionsInfo = infoMSG.data
   // 处理错误信息
   options.onerror = (event) => {
-    alert(event.data)
+    modal({ body: event.data })
   }
   options.onwserror = () => wsClose('连接发生错误')
   options.onwsclose = (event) => {
@@ -142,23 +143,26 @@ async function showConfig() {
     , configDF = getConfigTemplate(config)
   // 保存全局设置
   saveConfigButton.onclick = async () => {
+    modal()
     let configMSG = await options.setConfig(config)
-    if (configMSG.msg != null) alert(configMSG.msg)
+    if (configMSG.msg != null) modal({ body: configMSG.msg })
     else {
-      alert('保存成功')
       config = configMSG.data
       let configDF = getConfigTemplate(config)
       configDiv.innerText = ''
       configDiv.appendChild(configDF)
+      modal({ body: '保存成功' })
     }
   }
   // 添加新用户
   addUserButton.onclick = async () => {
+    modal()
     let userDataMSG = await options.newUserData()
       , uid = userDataMSG.uid
       , userData = userDataMSG.data
       , userDF = getUserDF(uid, userData)
     userDiv.appendChild(userDF)
+    modal({ body: '添加成功' })
   }
   // 显示日志
   showLogButton.onclick = () => {
@@ -224,10 +228,11 @@ function getUserDF(uid: string, userData: userData): DocumentFragment {
   userConfigDiv.appendChild(userConfigDF)
   // 保存用户设置
   saveUserButton.onclick = async () => {
+    modal()
     let userDataMSG = await options.setUserData(uid, userData)
-    if (userDataMSG.msg != null) alert(userDataMSG.msg)
+    if (userDataMSG.msg != null) modal({ body: userDataMSG.msg })
     else {
-      alert('保存成功')
+      modal({ body: '保存成功' })
       userData = userDataMSG.data
       let userConfigDF = getConfigTemplate(userData)
       userConfigDiv.innerText = ''
@@ -236,10 +241,11 @@ function getUserDF(uid: string, userData: userData): DocumentFragment {
   }
   // 删除用户设置
   deleteUserButton.onclick = async () => {
+    modal()
     let userDataMSG = await options.delUserData(uid)
-    if (userDataMSG.msg != null) alert(userDataMSG.msg)
+    if (userDataMSG.msg != null) modal({ body: userDataMSG.msg })
     else {
-      alert('删除成功')
+      modal({ body: '删除成功' })
       userDataDiv.remove()
     }
   }
@@ -262,7 +268,6 @@ function getConfigTemplate(config: config | userData): DocumentFragment {
     else configTemplate = <HTMLTemplateElement>template.querySelector('#configTextTemplate')
     let clone = document.importNode(configTemplate.content, true)
       , descriptionDiv = <HTMLDivElement>clone.querySelector('._description')
-      , tipDiv = <HTMLDivElement>clone.querySelector('._tip')
       , inputInput = <HTMLInputElement>clone.querySelector('input')
     switch (info.type) {
       case 'number':
@@ -286,7 +291,8 @@ function getConfigTemplate(config: config | userData): DocumentFragment {
         break
     }
     descriptionDiv.innerText = info.description
-    tipDiv.innerText = info.tip
+    descriptionDiv.title = info.tip
+    $(descriptionDiv).tooltip()
     df.appendChild(clone)
   }
   return df
@@ -304,6 +310,46 @@ function wsClose(data: string) {
   connectSpan.innerText = data
   if (current === 'option') danimation('option_to_login')
   else danimation('log_to_login')
+}
+/**
+ * 弹窗提示
+ * 无参数时只显示遮罩
+ * 
+ * @param {modalOPtions} [options] 
+ */
+function modal(options?: modalOPtions) {
+  if (options != null) {
+    let modalDialogDiv = <HTMLDivElement>modalDiv.querySelector('.modal-dialog')
+      , modalTemplate = <HTMLTemplateElement>template.querySelector('#modalContent')
+      , clone = document.importNode(modalTemplate.content, true)
+      , headerTitle = <HTMLHeadingElement>clone.querySelector('.modal-header .modal-title')
+      , headerClose = <HTMLElement>clone.querySelector('.modal-header .close')
+      , modalBody = <HTMLDivElement>clone.querySelector('.modal-body')
+      , footerClose = <HTMLElement>clone.querySelector('.modal-footer .btn-secondary')
+      , footerOK = <HTMLElement>clone.querySelector('.modal-footer .btn-primary')
+    headerClose.onclick = footerClose.onclick = () => {
+      $(modalDiv).one('hidden.bs.modal', () => {
+        modalDialogDiv.innerText = ''
+        if (typeof options.onClose === 'function') options.onClose(options.body)
+      })
+      $(modalDiv).modal('hide')
+    }
+    footerOK.onclick = () => {
+      $(modalDiv).one('hidden.bs.modal', () => {
+        modalDialogDiv.innerText = ''
+        if (typeof options.onOK === 'function') options.onOK(options.body)
+      })
+      $(modalDiv).modal('hide')
+    }
+    if (options.body instanceof HTMLDivElement) modalBody.appendChild(options.body)
+    else modalBody.innerText = options.body
+    if (options.title != null) headerTitle.innerText = options.title
+    if (options.close != null) footerClose.innerText = options.close
+    if (options.ok != null) footerOK.innerText = options.ok
+    if (options.showOK) footerOK.classList.remove('d-none')
+    modalDialogDiv.appendChild(clone)
+  }
+  $(modalDiv).modal({ backdrop: 'static', keyboard: false })
 }
 window.onunload = () => { options.close() }
 showLogin()

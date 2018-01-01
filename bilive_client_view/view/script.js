@@ -34,7 +34,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var options = new Options(), optionsInfo, dDiv = document.querySelector('#ddd'), loginDiv = document.querySelector('#login'), optionDiv = document.querySelector('#option'), configDiv = document.querySelector('#config'), userDiv = document.querySelector('#user'), logDiv = document.querySelector('#log'), returnButton = document.querySelector('#logreturn'), template = document.querySelector('#template')
+var options = new Options(), optionsInfo, dDiv = document.querySelector('#ddd'), loginDiv = document.querySelector('#login'), optionDiv = document.querySelector('#option'), configDiv = document.querySelector('#config'), userDiv = document.querySelector('#user'), logDiv = document.querySelector('#log'), returnButton = document.querySelector('#logreturn'), modalDiv = document.querySelector('.modal'), template = document.querySelector('#template')
 // 3D效果
 , current = 'login';
 function danimation(name) {
@@ -155,7 +155,7 @@ function login() {
                     optionsInfo = infoMSG.data;
                     // 处理错误信息
                     options.onerror = function (event) {
-                        alert(event.data);
+                        modal({ body: event.data });
                     };
                     options.onwserror = function () { return wsClose('连接发生错误'); };
                     options.onwsclose = function (event) {
@@ -200,17 +200,19 @@ function showConfig() {
                         var configMSG, configDF_1;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, options.setConfig(config)];
+                                case 0:
+                                    modal();
+                                    return [4 /*yield*/, options.setConfig(config)];
                                 case 1:
                                     configMSG = _a.sent();
                                     if (configMSG.msg != null)
-                                        alert(configMSG.msg);
+                                        modal({ body: configMSG.msg });
                                     else {
-                                        alert('保存成功');
                                         config = configMSG.data;
                                         configDF_1 = getConfigTemplate(config);
                                         configDiv.innerText = '';
                                         configDiv.appendChild(configDF_1);
+                                        modal({ body: '保存成功' });
                                     }
                                     return [2 /*return*/];
                             }
@@ -221,10 +223,13 @@ function showConfig() {
                         var userDataMSG, uid, userData, userDF;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, options.newUserData()];
+                                case 0:
+                                    modal();
+                                    return [4 /*yield*/, options.newUserData()];
                                 case 1:
                                     userDataMSG = _a.sent(), uid = userDataMSG.uid, userData = userDataMSG.data, userDF = getUserDF(uid, userData);
                                     userDiv.appendChild(userDF);
+                                    modal({ body: '添加成功' });
                                     return [2 /*return*/];
                             }
                         });
@@ -320,13 +325,15 @@ function getUserDF(uid, userData) {
         var userDataMSG, userConfigDF_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, options.setUserData(uid, userData)];
+                case 0:
+                    modal();
+                    return [4 /*yield*/, options.setUserData(uid, userData)];
                 case 1:
                     userDataMSG = _a.sent();
                     if (userDataMSG.msg != null)
-                        alert(userDataMSG.msg);
+                        modal({ body: userDataMSG.msg });
                     else {
-                        alert('保存成功');
+                        modal({ body: '保存成功' });
                         userData = userDataMSG.data;
                         userConfigDF_1 = getConfigTemplate(userData);
                         userConfigDiv.innerText = '';
@@ -341,13 +348,15 @@ function getUserDF(uid, userData) {
         var userDataMSG;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, options.delUserData(uid)];
+                case 0:
+                    modal();
+                    return [4 /*yield*/, options.delUserData(uid)];
                 case 1:
                     userDataMSG = _a.sent();
                     if (userDataMSG.msg != null)
-                        alert(userDataMSG.msg);
+                        modal({ body: userDataMSG.msg });
                     else {
-                        alert('删除成功');
+                        modal({ body: '删除成功' });
                         userDataDiv.remove();
                     }
                     return [2 /*return*/];
@@ -373,7 +382,7 @@ function getConfigTemplate(config) {
             configTemplate = template.querySelector('#configCheckboxTemplate');
         else
             configTemplate = template.querySelector('#configTextTemplate');
-        var clone = document.importNode(configTemplate.content, true), descriptionDiv = clone.querySelector('._description'), tipDiv = clone.querySelector('._tip'), inputInput = clone.querySelector('input');
+        var clone = document.importNode(configTemplate.content, true), descriptionDiv = clone.querySelector('._description'), inputInput = clone.querySelector('input');
         switch (info.type) {
             case 'number':
                 inputInput.value = configValue.toString();
@@ -396,7 +405,8 @@ function getConfigTemplate(config) {
                 break;
         }
         descriptionDiv.innerText = info.description;
-        tipDiv.innerText = info.tip;
+        descriptionDiv.title = info.tip;
+        $(descriptionDiv).tooltip();
         df.appendChild(clone);
     };
     for (var key in config) {
@@ -419,6 +429,47 @@ function wsClose(data) {
         danimation('option_to_login');
     else
         danimation('log_to_login');
+}
+/**
+ * 弹窗提示
+ * 无参数时只显示遮罩
+ *
+ * @param {modalOPtions} [options]
+ */
+function modal(options) {
+    if (options != null) {
+        var modalDialogDiv_1 = modalDiv.querySelector('.modal-dialog'), modalTemplate = template.querySelector('#modalContent'), clone = document.importNode(modalTemplate.content, true), headerTitle = clone.querySelector('.modal-header .modal-title'), headerClose = clone.querySelector('.modal-header .close'), modalBody = clone.querySelector('.modal-body'), footerClose = clone.querySelector('.modal-footer .btn-secondary'), footerOK = clone.querySelector('.modal-footer .btn-primary');
+        headerClose.onclick = footerClose.onclick = function () {
+            $(modalDiv).one('hidden.bs.modal', function () {
+                modalDialogDiv_1.innerText = '';
+                if (typeof options.onClose === 'function')
+                    options.onClose(options.body);
+            });
+            $(modalDiv).modal('hide');
+        };
+        footerOK.onclick = function () {
+            $(modalDiv).one('hidden.bs.modal', function () {
+                modalDialogDiv_1.innerText = '';
+                if (typeof options.onOK === 'function')
+                    options.onOK(options.body);
+            });
+            $(modalDiv).modal('hide');
+        };
+        if (options.body instanceof HTMLDivElement)
+            modalBody.appendChild(options.body);
+        else
+            modalBody.innerText = options.body;
+        if (options.title != null)
+            headerTitle.innerText = options.title;
+        if (options.close != null)
+            footerClose.innerText = options.close;
+        if (options.ok != null)
+            footerOK.innerText = options.ok;
+        if (options.showOK)
+            footerOK.classList.remove('d-none');
+        modalDialogDiv_1.appendChild(clone);
+    }
+    $(modalDiv).modal({ backdrop: 'static', keyboard: false });
 }
 window.onunload = function () { options.close(); };
 showLogin();

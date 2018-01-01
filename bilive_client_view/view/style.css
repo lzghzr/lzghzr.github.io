@@ -1,6 +1,5 @@
 body {
   background-color: #343a40;
-  perspective: 200vw;
 }
 #login, #option, #log {
   background-color: #f8f9fa;
@@ -17,10 +16,19 @@ body {
 ._description:hover + ._tip {
   display: inline !important;
 }
-/* 3D效果 */
-#ddd {
-  transform-style: preserve-3d;
+/* bootstrap */
+.modal-content {
+  animation: modal-content .3s;
 }
+@keyframes modal-content {
+  from {
+    transform: translate(0, -25%);
+  }
+  to {
+    transform: translate(0, 0);
+  }
+}
+/* 3D效果 */
 #login {
   transform: rotateY(0deg) translateZ(50vw);
 }
