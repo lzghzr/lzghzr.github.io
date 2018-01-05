@@ -227,11 +227,11 @@ function getUserDF(uid: string, userData: userData): DocumentFragment {
     , userConfigDF = getConfigTemplate(userData)
   userConfigDiv.appendChild(userConfigDF)
   // 保存用户设置
-  let captcha = ''
+  let captcha: string | undefined = undefined
   saveUserButton.onclick = async () => {
     modal()
-    let userDataMSG = await options.setUserData(uid, userData, captcha === '' ? undefined : captcha)
-    captcha = ''
+    let userDataMSG = await options.setUserData(uid, userData, captcha)
+    captcha = undefined
     if (userDataMSG.msg == null) {
       modal({ body: '保存成功' })
       userData = userDataMSG.data
@@ -239,7 +239,7 @@ function getUserDF(uid: string, userData: userData): DocumentFragment {
       userConfigDiv.innerText = ''
       userConfigDiv.appendChild(userConfigDF)
     }
-    else if (userDataMSG.msg === 'captcha' && userDataMSG.captcha !== '') {
+    else if (userDataMSG.msg === 'captcha' && userDataMSG.captcha != null) {
       let captchaTemplate = <HTMLTemplateElement>template.querySelector('#captchaTemplate')
         , clone = document.importNode(captchaTemplate.content, true)
         , captchaImg = <HTMLImageElement>clone.querySelector('img')

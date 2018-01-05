@@ -24,7 +24,7 @@ interface userMSG extends message {
 interface userDataMSG extends message {
   uid: string
   data: userData
-  captcha: '' | string
+  captcha?: string
 }
 // 应用设置
 interface config {

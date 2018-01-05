@@ -321,17 +321,17 @@ function getUserDF(uid, userData) {
     var userTemplate = template.querySelector('#userTemplate'), clone = document.importNode(userTemplate.content, true), userDataDiv = clone.querySelector('.userData'), userConfigDiv = clone.querySelector('.userConfig'), saveUserButton = clone.querySelector('.saveUser'), deleteUserButton = clone.querySelector('.deleteUser'), userConfigDF = getConfigTemplate(userData);
     userConfigDiv.appendChild(userConfigDF);
     // 保存用户设置
-    var captcha = '';
+    var captcha = undefined;
     saveUserButton.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
         var userDataMSG, userConfigDF_1, captchaTemplate, clone_1, captchaImg, captchaInput_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     modal();
-                    return [4 /*yield*/, options.setUserData(uid, userData, captcha === '' ? undefined : captcha)];
+                    return [4 /*yield*/, options.setUserData(uid, userData, captcha)];
                 case 1:
                     userDataMSG = _a.sent();
-                    captcha = '';
+                    captcha = undefined;
                     if (userDataMSG.msg == null) {
                         modal({ body: '保存成功' });
                         userData = userDataMSG.data;
@@ -339,7 +339,7 @@ function getUserDF(uid, userData) {
                         userConfigDiv.innerText = '';
                         userConfigDiv.appendChild(userConfigDF_1);
                     }
-                    else if (userDataMSG.msg === 'captcha' && userDataMSG.captcha !== '') {
+                    else if (userDataMSG.msg === 'captcha' && userDataMSG.captcha != null) {
                         captchaTemplate = template.querySelector('#captchaTemplate'), clone_1 = document.importNode(captchaTemplate.content, true), captchaImg = clone_1.querySelector('img'), captchaInput_1 = clone_1.querySelector('input');
                         captchaImg.src = userDataMSG.captcha;
                         modal({
