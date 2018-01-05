@@ -13,6 +13,8 @@ var Options = /** @class */ (function () {
          * @memberof Options
          */
         this.__callback = {};
+        // 关闭窗口时断开连接
+        window.onunload = function () { options.close(); };
     }
     Object.defineProperty(Options.prototype, "_ts", {
         /**
@@ -204,11 +206,14 @@ var Options = /** @class */ (function () {
      *
      * @param {string} uid
      * @param {userData} data
+     * @param {string} [captcha]
      * @returns {Promise<userDataMSG>}
      * @memberof Options
      */
-    Options.prototype.setUserData = function (uid, data) {
-        var message = { cmd: 'setUserData', uid: uid, data: data };
+    Options.prototype.setUserData = function (uid, data, captcha) {
+        var message = { cmd: 'setUserData', uid: uid, data: data, captcha: captcha };
+        if (captcha != null)
+            message.captcha = captcha;
         return this._send(message);
     };
     /**

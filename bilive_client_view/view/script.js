@@ -321,24 +321,38 @@ function getUserDF(uid, userData) {
     var userTemplate = template.querySelector('#userTemplate'), clone = document.importNode(userTemplate.content, true), userDataDiv = clone.querySelector('.userData'), userConfigDiv = clone.querySelector('.userConfig'), saveUserButton = clone.querySelector('.saveUser'), deleteUserButton = clone.querySelector('.deleteUser'), userConfigDF = getConfigTemplate(userData);
     userConfigDiv.appendChild(userConfigDF);
     // 保存用户设置
+    var captcha = '';
     saveUserButton.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
-        var userDataMSG, userConfigDF_1;
+        var userDataMSG, userConfigDF_1, captchaTemplate, clone_1, captchaImg, captchaInput_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     modal();
-                    return [4 /*yield*/, options.setUserData(uid, userData)];
+                    return [4 /*yield*/, options.setUserData(uid, userData, captcha === '' ? undefined : captcha)];
                 case 1:
                     userDataMSG = _a.sent();
-                    if (userDataMSG.msg != null)
-                        modal({ body: userDataMSG.msg });
-                    else {
+                    captcha = '';
+                    if (userDataMSG.msg == null) {
                         modal({ body: '保存成功' });
                         userData = userDataMSG.data;
                         userConfigDF_1 = getConfigTemplate(userData);
                         userConfigDiv.innerText = '';
                         userConfigDiv.appendChild(userConfigDF_1);
                     }
+                    else if (userDataMSG.msg === 'captcha' && userDataMSG.captcha !== '') {
+                        captchaTemplate = template.querySelector('#captchaTemplate'), clone_1 = document.importNode(captchaTemplate.content, true), captchaImg = clone_1.querySelector('img'), captchaInput_1 = clone_1.querySelector('input');
+                        captchaImg.src = userDataMSG.captcha;
+                        modal({
+                            body: clone_1,
+                            showOK: true,
+                            onOK: function () {
+                                captcha = captchaInput_1.value;
+                                saveUserButton.click();
+                            }
+                        });
+                    }
+                    else
+                        modal({ body: userDataMSG.msg });
                     return [2 /*return*/];
             }
         });
@@ -438,7 +452,7 @@ function wsClose(data) {
  */
 function modal(options) {
     if (options != null) {
-        var modalDialogDiv_1 = modalDiv.querySelector('.modal-dialog'), modalTemplate = template.querySelector('#modalContent'), clone = document.importNode(modalTemplate.content, true), headerTitle = clone.querySelector('.modal-header .modal-title'), headerClose = clone.querySelector('.modal-header .close'), modalBody = clone.querySelector('.modal-body'), footerClose = clone.querySelector('.modal-footer .btn-secondary'), footerOK = clone.querySelector('.modal-footer .btn-primary');
+        var modalDialogDiv_1 = modalDiv.querySelector('.modal-dialog'), modalTemplate = template.querySelector('#modalContentTemplate'), clone = document.importNode(modalTemplate.content, true), headerTitle = clone.querySelector('.modal-header .modal-title'), headerClose = clone.querySelector('.modal-header .close'), modalBody = clone.querySelector('.modal-body'), footerClose = clone.querySelector('.modal-footer .btn-secondary'), footerOK = clone.querySelector('.modal-footer .btn-primary');
         headerClose.onclick = footerClose.onclick = function () {
             $(modalDiv).one('hidden.bs.modal', function () {
                 modalDialogDiv_1.innerText = '';
@@ -455,7 +469,7 @@ function modal(options) {
             });
             $(modalDiv).modal('hide');
         };
-        if (options.body instanceof HTMLDivElement)
+        if (options.body instanceof DocumentFragment)
             modalBody.appendChild(options.body);
         else
             modalBody.innerText = options.body;
@@ -471,5 +485,4 @@ function modal(options) {
     }
     $(modalDiv).modal({ backdrop: 'static', keyboard: false });
 }
-window.onunload = function () { options.close(); };
 showLogin();

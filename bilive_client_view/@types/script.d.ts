@@ -1,9 +1,9 @@
 interface modalOPtions {
-  body: string | HTMLDivElement
+  body: string | DocumentFragment
   title?: string
   close?: string
   ok?: string
   showOK?: boolean
-  onOK?: (body: string | HTMLDivElement) => void
-  onClose?: (body: string | HTMLDivElement) => void
+  onOK?: (body: this['body']) => void
+  onClose?: (body: this['body']) => void
 }

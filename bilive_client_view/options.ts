@@ -5,6 +5,8 @@
  */
 class Options {
   constructor() {
+    // 关闭窗口时断开连接
+    window.onunload = () => { options.close() }
   }
   /**
    * 回调函数
@@ -221,11 +223,13 @@ class Options {
    * 
    * @param {string} uid 
    * @param {userData} data 
+   * @param {string} [captcha] 
    * @returns {Promise<userDataMSG>} 
    * @memberof Options
    */
-  public setUserData(uid: string, data: userData): Promise<userDataMSG> {
-    let message = { cmd: 'setUserData', uid, data }
+  public setUserData(uid: string, data: userData, captcha?: string): Promise<userDataMSG> {
+    let message = { cmd: 'setUserData', uid, data, captcha }
+    if (captcha != null) message.captcha = captcha
     return this._send<userDataMSG>(message)
   }
   /**

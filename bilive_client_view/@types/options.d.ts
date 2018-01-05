@@ -24,22 +24,21 @@ interface userMSG extends message {
 interface userDataMSG extends message {
   uid: string
   data: userData
+  captcha: '' | string
 }
 // 应用设置
 interface config {
-  [index: string]: number | string | number[]
+  [index: string]: number | number[]
   defaultUserID: number
   defaultRoomID: number
-  apiOrigin: string
-  apiKey: string
   eventRooms: number[]
-  beatStormBlackList: number[]
 }
 interface userData {
-  [index: string]: string | boolean
+  [index: string]: string | boolean | number
   nickname: string
   userName: string
   passWord: string
+  biliUID: number
   accessToken: string
   cookie: string
   status: boolean
@@ -48,8 +47,9 @@ interface userData {
   eventRoom: boolean
   smallTV: boolean
   raffle: boolean
-  beatStorm: boolean
-  debug: boolean
+  sendGift: boolean
+  sendGiftRoom: number
+  signGroup: boolean
 }
 interface optionsInfo {
   [index: string]: configInfoData
@@ -58,11 +58,10 @@ interface optionsInfo {
   apiOrigin: configInfoData
   apiKey: configInfoData
   eventRooms: configInfoData
-  beatStormBlackList: configInfoData
-  beatStormLiveTop: configInfoData
   nickname: configInfoData
   userName: configInfoData
   passWord: configInfoData
+  biliUID: configInfoData
   accessToken: configInfoData
   cookie: configInfoData
   status: configInfoData
@@ -71,8 +70,9 @@ interface optionsInfo {
   eventRoom: configInfoData
   smallTV: configInfoData
   raffle: configInfoData
-  beatStorm: configInfoData
-  debug: configInfoData
+  sendGift: configInfoData,
+  sendGiftRoom: configInfoData,
+  signGroup: configInfoData
 }
 interface configInfoData {
   description: string

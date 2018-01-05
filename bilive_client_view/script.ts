@@ -227,17 +227,34 @@ function getUserDF(uid: string, userData: userData): DocumentFragment {
     , userConfigDF = getConfigTemplate(userData)
   userConfigDiv.appendChild(userConfigDF)
   // 保存用户设置
+  let captcha = ''
   saveUserButton.onclick = async () => {
     modal()
-    let userDataMSG = await options.setUserData(uid, userData)
-    if (userDataMSG.msg != null) modal({ body: userDataMSG.msg })
-    else {
+    let userDataMSG = await options.setUserData(uid, userData, captcha === '' ? undefined : captcha)
+    captcha = ''
+    if (userDataMSG.msg == null) {
       modal({ body: '保存成功' })
       userData = userDataMSG.data
       let userConfigDF = getConfigTemplate(userData)
       userConfigDiv.innerText = ''
       userConfigDiv.appendChild(userConfigDF)
     }
+    else if (userDataMSG.msg === 'captcha' && userDataMSG.captcha !== '') {
+      let captchaTemplate = <HTMLTemplateElement>template.querySelector('#captchaTemplate')
+        , clone = document.importNode(captchaTemplate.content, true)
+        , captchaImg = <HTMLImageElement>clone.querySelector('img')
+        , captchaInput = <HTMLInputElement>clone.querySelector('input')
+      captchaImg.src = userDataMSG.captcha
+      modal({
+        body: clone,
+        showOK: true,
+        onOK: () => {
+          captcha = captchaInput.value
+          saveUserButton.click()
+        }
+      })
+    }
+    else modal({ body: userDataMSG.msg })
   }
   // 删除用户设置
   deleteUserButton.onclick = async () => {
@@ -320,7 +337,7 @@ function wsClose(data: string) {
 function modal(options?: modalOPtions) {
   if (options != null) {
     let modalDialogDiv = <HTMLDivElement>modalDiv.querySelector('.modal-dialog')
-      , modalTemplate = <HTMLTemplateElement>template.querySelector('#modalContent')
+      , modalTemplate = <HTMLTemplateElement>template.querySelector('#modalContentTemplate')
       , clone = document.importNode(modalTemplate.content, true)
       , headerTitle = <HTMLHeadingElement>clone.querySelector('.modal-header .modal-title')
       , headerClose = <HTMLElement>clone.querySelector('.modal-header .close')
@@ -341,7 +358,7 @@ function modal(options?: modalOPtions) {
       })
       $(modalDiv).modal('hide')
     }
-    if (options.body instanceof HTMLDivElement) modalBody.appendChild(options.body)
+    if (options.body instanceof DocumentFragment) modalBody.appendChild(options.body)
     else modalBody.innerText = options.body
     if (options.title != null) headerTitle.innerText = options.title
     if (options.close != null) footerClose.innerText = options.close
@@ -351,5 +368,4 @@ function modal(options?: modalOPtions) {
   }
   $(modalDiv).modal({ backdrop: 'static', keyboard: false })
 }
-window.onunload = () => { options.close() }
 showLogin()
