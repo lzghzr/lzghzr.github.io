@@ -116,7 +116,7 @@ var Options = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             var timeout = setTimeout(function () {
                 reject('timeout');
-            }, 1e+4); // 10秒
+            }, 3e+4); // 30秒
             var ts = _this._ts;
             message.ts = ts;
             _this.__callback[ts] = function (msg) {

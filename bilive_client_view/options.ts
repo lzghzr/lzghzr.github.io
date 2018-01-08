@@ -111,7 +111,7 @@ class Options {
     return new Promise<T>((resolve, reject) => {
       let timeout = setTimeout(() => {
         reject('timeout')
-      }, 1e+4) // 10秒
+      }, 3e+4) // 30秒
       let ts = this._ts
       message.ts = ts
       this.__callback[ts] = (msg: T) => {
