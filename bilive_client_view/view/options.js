@@ -26,7 +26,8 @@ var Options = /** @class */ (function () {
          * @memberof Options
          */
         get: function () {
-            var bufArray = window.crypto.getRandomValues(new Uint32Array(5)), random = '';
+            var bufArray = window.crypto.getRandomValues(new Uint32Array(5));
+            var random = '';
             bufArray.forEach(function (value) { random += value.toString(16); });
             return random.slice(0, 32);
         },
@@ -45,7 +46,8 @@ var Options = /** @class */ (function () {
         var _this = this;
         return new Promise(function (resolve) {
             try {
-                var ws_1 = new WebSocket(path, protocols), removeEvent_1 = function () {
+                var ws_1 = new WebSocket(path, protocols);
+                var removeEvent_1 = function () {
                     delete ws_1.onopen;
                     delete ws_1.onerror;
                 };
@@ -55,12 +57,14 @@ var Options = /** @class */ (function () {
                     _this._init();
                     resolve(true);
                 };
-                ws_1.onerror = function () {
+                ws_1.onerror = function (error) {
                     removeEvent_1();
+                    console.error(error);
                     resolve(false);
                 };
             }
             catch (error) {
+                console.error(error);
                 resolve(false);
             }
         });
@@ -88,7 +92,8 @@ var Options = /** @class */ (function () {
                 console.error(data);
         };
         this._ws.onmessage = function (data) {
-            var message = JSON.parse(data.data), ts = message.ts;
+            var message = JSON.parse(data.data);
+            var ts = message.ts;
             if (ts != null && typeof _this.__callback[ts] === 'function') {
                 delete message.ts;
                 _this.__callback[ts](message);
@@ -116,7 +121,7 @@ var Options = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             var timeout = setTimeout(function () {
                 reject('timeout');
-            }, 3e+4); // 30秒
+            }, 30 * 1000); // 30秒
             var ts = _this._ts;
             message.ts = ts;
             _this.__callback[ts] = function (msg) {

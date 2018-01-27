@@ -1,16 +1,16 @@
-let options = new Options()
-  , optionsInfo: optionsInfo
-  , dDiv = <HTMLDivElement>document.querySelector('#ddd')
-  , loginDiv = <HTMLDivElement>document.querySelector('#login')
-  , optionDiv = <HTMLDivElement>document.querySelector('#option')
-  , configDiv = <HTMLDivElement>document.querySelector('#config')
-  , userDiv = <HTMLDivElement>document.querySelector('#user')
-  , logDiv = <HTMLDivElement>document.querySelector('#log')
-  , returnButton = <HTMLElement>document.querySelector('#logreturn')
-  , modalDiv = <HTMLDivElement>document.querySelector('.modal')
-  , template = <HTMLDivElement>document.querySelector('#template')
-  // 3D效果
-  , current: 'login' | 'option' | 'log' = 'login'
+const options = new Options()
+let optionsInfo: optionsInfo
+const dDiv = <HTMLDivElement>document.querySelector('#ddd')
+const loginDiv = <HTMLDivElement>document.querySelector('#login')
+const optionDiv = <HTMLDivElement>document.querySelector('#option')
+const configDiv = <HTMLDivElement>document.querySelector('#config')
+const userDiv = <HTMLDivElement>document.querySelector('#user')
+const logDiv = <HTMLDivElement>document.querySelector('#log')
+const returnButton = <HTMLElement>document.querySelector('#logreturn')
+const modalDiv = <HTMLDivElement>document.querySelector('.modal')
+const template = <HTMLDivElement>document.querySelector('#template')
+// 3D效果
+let current: 'login' | 'option' | 'log' = 'login'
 function danimation(name: string) {
   if (current === 'login') {
     optionDiv.classList.remove('d-none')
@@ -90,15 +90,15 @@ dDiv.addEventListener('animationend', event => {
  * 
  */
 function showLogin() {
-  let pathInput = <HTMLInputElement>loginDiv.querySelector('#path input')
-    , protocolInput = <HTMLInputElement>loginDiv.querySelector('#protocol input[type="text"]')
-    , keepInput = <HTMLInputElement>loginDiv.querySelector('#protocol input[type="checkbox"]')
-    , connectButton = <HTMLElement>loginDiv.querySelector('#connect button')
-    , connectSpan = <HTMLSpanElement>loginDiv.querySelector('#connect span')
+  const pathInput = <HTMLInputElement>loginDiv.querySelector('#path input')
+  const protocolInput = <HTMLInputElement>loginDiv.querySelector('#protocol input[type="text"]')
+  const keepInput = <HTMLInputElement>loginDiv.querySelector('#protocol input[type="checkbox"]')
+  const connectButton = <HTMLElement>loginDiv.querySelector('#connect button')
+  const connectSpan = <HTMLSpanElement>loginDiv.querySelector('#connect span')
   connectButton.onclick = async () => {
-    let protocols = [protocolInput.value]
+    const protocols = [protocolInput.value]
     if (keepInput.checked) protocols.push('keep')
-    let connected = await options.connect(pathInput.value, protocols)
+    const connected = await options.connect(pathInput.value, protocols)
     if (connected) login()
     else connectSpan.innerText = '连接失败'
   }
@@ -110,7 +110,7 @@ function showLogin() {
  * 
  */
 async function login() {
-  let infoMSG = await options.getInfo()
+  const infoMSG = await options.getInfo()
   optionsInfo = infoMSG.data
   // 处理错误信息
   options.onerror = (event) => {
@@ -119,7 +119,7 @@ async function login() {
   options.onwserror = () => wsClose('连接发生错误')
   options.onwsclose = (event) => {
     try {
-      let msg: message = JSON.parse(event.reason)
+      const msg: message = JSON.parse(event.reason)
       wsClose('连接已关闭 ' + msg.msg)
     } catch (error) {
       wsClose('连接已关闭')
@@ -135,20 +135,20 @@ async function login() {
  * 
  */
 async function showConfig() {
-  let saveConfigButton = <HTMLElement>document.querySelector('#saveConfig')
-    , addUserButton = <HTMLElement>document.querySelector('#addUser')
-    , showLogButton = <HTMLElement>document.querySelector('#showLog')
-    , configMSG = await options.getConfig()
-    , config = configMSG.data
-    , configDF = getConfigTemplate(config)
+  const saveConfigButton = <HTMLElement>document.querySelector('#saveConfig')
+  const addUserButton = <HTMLElement>document.querySelector('#addUser')
+  const showLogButton = <HTMLElement>document.querySelector('#showLog')
+  const configMSG = await options.getConfig()
+  let config = configMSG.data
+  const configDF = getConfigTemplate(config)
   // 保存全局设置
   saveConfigButton.onclick = async () => {
     modal()
-    let configMSG = await options.setConfig(config)
+    const configMSG = await options.setConfig(config)
     if (configMSG.msg != null) modal({ body: configMSG.msg })
     else {
       config = configMSG.data
-      let configDF = getConfigTemplate(config)
+      const configDF = getConfigTemplate(config)
       configDiv.innerText = ''
       configDiv.appendChild(configDF)
       modal({ body: '保存成功' })
@@ -157,10 +157,10 @@ async function showConfig() {
   // 添加新用户
   addUserButton.onclick = async () => {
     modal()
-    let userDataMSG = await options.newUserData()
-      , uid = userDataMSG.uid
-      , userData = userDataMSG.data
-      , userDF = getUserDF(uid, userData)
+    const userDataMSG = await options.newUserData()
+    const uid = userDataMSG.uid
+    const userData = userDataMSG.data
+    const userDF = getUserDF(uid, userData)
     userDiv.appendChild(userDF)
     modal({ body: '添加成功' })
   }
@@ -175,16 +175,16 @@ async function showConfig() {
  * 
  */
 async function showLog() {
-  let logMSG = await options.getLog()
-    , logs = logMSG.data
-    , logDF = document.createDocumentFragment()
+  const logMSG = await options.getLog()
+  const logs = logMSG.data
+  const logDF = document.createDocumentFragment()
   logs.forEach(log => {
-    let div = document.createElement('div')
+    const div = document.createElement('div')
     div.innerText = log
     logDF.appendChild(div)
   })
   options.onlog = data => {
-    let div = document.createElement('div')
+    const div = document.createElement('div')
     div.innerText = data
     logDiv.appendChild(div)
     if (logDiv.scrollHeight - logDiv.clientHeight - logDiv.scrollTop < 2 * div.offsetHeight) logDiv.scrollTop = logDiv.scrollHeight
@@ -199,13 +199,13 @@ async function showLog() {
  * 
  */
 async function showUser() {
-  let userMSG = await options.getAllUID()
-    , uidArray = userMSG.data
-    , df = document.createDocumentFragment()
+  const userMSG = await options.getAllUID()
+  const uidArray = userMSG.data
+  const df = document.createDocumentFragment()
   for (let uid of uidArray) {
-    let userDataMSG = await options.getUserData(uid)
-      , userData = userDataMSG.data
-      , userDF = getUserDF(uid, userData)
+    const userDataMSG = await options.getUserData(uid)
+    const userData = userDataMSG.data
+    const userDF = getUserDF(uid, userData)
     df.appendChild(userDF)
   }
   userDiv.appendChild(df)
@@ -218,32 +218,32 @@ async function showUser() {
  * @returns {DocumentFragment} 
  */
 function getUserDF(uid: string, userData: userData): DocumentFragment {
-  let userTemplate = <HTMLTemplateElement>template.querySelector('#userTemplate')
-    , clone = document.importNode(userTemplate.content, true)
-    , userDataDiv = <HTMLDivElement>clone.querySelector('.userData')
-    , userConfigDiv = <HTMLDivElement>clone.querySelector('.userConfig')
-    , saveUserButton = <HTMLElement>clone.querySelector('.saveUser')
-    , deleteUserButton = <HTMLElement>clone.querySelector('.deleteUser')
-    , userConfigDF = getConfigTemplate(userData)
+  const userTemplate = <HTMLTemplateElement>template.querySelector('#userTemplate')
+  const clone = document.importNode(userTemplate.content, true)
+  const userDataDiv = <HTMLDivElement>clone.querySelector('.userData')
+  const userConfigDiv = <HTMLDivElement>clone.querySelector('.userConfig')
+  const saveUserButton = <HTMLElement>clone.querySelector('.saveUser')
+  const deleteUserButton = <HTMLElement>clone.querySelector('.deleteUser')
+  const userConfigDF = getConfigTemplate(userData)
   userConfigDiv.appendChild(userConfigDF)
   // 保存用户设置
   let captcha: string | undefined = undefined
   saveUserButton.onclick = async () => {
     modal()
-    let userDataMSG = await options.setUserData(uid, userData, captcha)
+    const userDataMSG = await options.setUserData(uid, userData, captcha)
     captcha = undefined
     if (userDataMSG.msg == null) {
       modal({ body: '保存成功' })
       userData = userDataMSG.data
-      let userConfigDF = getConfigTemplate(userData)
+      const userConfigDF = getConfigTemplate(userData)
       userConfigDiv.innerText = ''
       userConfigDiv.appendChild(userConfigDF)
     }
     else if (userDataMSG.msg === 'captcha' && userDataMSG.captcha != null) {
-      let captchaTemplate = <HTMLTemplateElement>template.querySelector('#captchaTemplate')
-        , clone = document.importNode(captchaTemplate.content, true)
-        , captchaImg = <HTMLImageElement>clone.querySelector('img')
-        , captchaInput = <HTMLInputElement>clone.querySelector('input')
+      const captchaTemplate = <HTMLTemplateElement>template.querySelector('#captchaTemplate')
+      const clone = document.importNode(captchaTemplate.content, true)
+      const captchaImg = <HTMLImageElement>clone.querySelector('img')
+      const captchaInput = <HTMLInputElement>clone.querySelector('input')
       captchaImg.src = userDataMSG.captcha
       modal({
         body: clone,
@@ -259,7 +259,7 @@ function getUserDF(uid: string, userData: userData): DocumentFragment {
   // 删除用户设置
   deleteUserButton.onclick = async () => {
     modal()
-    let userDataMSG = await options.delUserData(uid)
+    const userDataMSG = await options.delUserData(uid)
     if (userDataMSG.msg != null) modal({ body: userDataMSG.msg })
     else {
       modal({ body: '删除成功' })
@@ -275,17 +275,17 @@ function getUserDF(uid: string, userData: userData): DocumentFragment {
  * @returns {DocumentFragment} 
  */
 function getConfigTemplate(config: config | userData): DocumentFragment {
-  let df = document.createDocumentFragment()
+  const df = document.createDocumentFragment()
   for (let key in config) {
-    let info = optionsInfo[key]
+    const info = optionsInfo[key]
     if (info == null) continue
-    let configValue = config[key]
-      , configTemplate: HTMLTemplateElement
+    const configValue = config[key]
+    let configTemplate: HTMLTemplateElement
     if (info.type === 'boolean') configTemplate = <HTMLTemplateElement>template.querySelector('#configCheckboxTemplate')
     else configTemplate = <HTMLTemplateElement>template.querySelector('#configTextTemplate')
-    let clone = document.importNode(configTemplate.content, true)
-      , descriptionDiv = <HTMLDivElement>clone.querySelector('._description')
-      , inputInput = <HTMLInputElement>clone.querySelector('input')
+    const clone = document.importNode(configTemplate.content, true)
+    const descriptionDiv = <HTMLDivElement>clone.querySelector('._description')
+    const inputInput = <HTMLInputElement>clone.querySelector('input')
     switch (info.type) {
       case 'number':
         inputInput.value = (<number>configValue).toString()
@@ -320,7 +320,7 @@ function getConfigTemplate(config: config | userData): DocumentFragment {
  * @param {string} data 
  */
 function wsClose(data: string) {
-  let connectSpan = <HTMLSpanElement>loginDiv.querySelector('#connect span')
+  const connectSpan = <HTMLSpanElement>loginDiv.querySelector('#connect span')
   configDiv.innerText = ''
   logDiv.innerText = ''
   userDiv.innerText = ''
@@ -336,14 +336,14 @@ function wsClose(data: string) {
  */
 function modal(options?: modalOPtions) {
   if (options != null) {
-    let modalDialogDiv = <HTMLDivElement>modalDiv.querySelector('.modal-dialog')
-      , modalTemplate = <HTMLTemplateElement>template.querySelector('#modalContentTemplate')
-      , clone = document.importNode(modalTemplate.content, true)
-      , headerTitle = <HTMLHeadingElement>clone.querySelector('.modal-header .modal-title')
-      , headerClose = <HTMLElement>clone.querySelector('.modal-header .close')
-      , modalBody = <HTMLDivElement>clone.querySelector('.modal-body')
-      , footerClose = <HTMLElement>clone.querySelector('.modal-footer .btn-secondary')
-      , footerOK = <HTMLElement>clone.querySelector('.modal-footer .btn-primary')
+    const modalDialogDiv = <HTMLDivElement>modalDiv.querySelector('.modal-dialog')
+    const modalTemplate = <HTMLTemplateElement>template.querySelector('#modalContentTemplate')
+    const clone = document.importNode(modalTemplate.content, true)
+    const headerTitle = <HTMLHeadingElement>clone.querySelector('.modal-header .modal-title')
+    const headerClose = <HTMLElement>clone.querySelector('.modal-header .close')
+    const modalBody = <HTMLDivElement>clone.querySelector('.modal-body')
+    const footerClose = <HTMLElement>clone.querySelector('.modal-footer .btn-secondary')
+    const footerOK = <HTMLElement>clone.querySelector('.modal-footer .btn-primary')
     headerClose.onclick = footerClose.onclick = () => {
       $(modalDiv).one('hidden.bs.modal', () => {
         modalDialogDiv.innerText = ''

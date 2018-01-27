@@ -32,8 +32,8 @@ class Options {
    * @memberof Options
    */
   protected get _ts(): string {
-    let bufArray = window.crypto.getRandomValues(new Uint32Array(5))
-      , random = ''
+    const bufArray = window.crypto.getRandomValues(new Uint32Array(5))
+    let random = ''
     bufArray.forEach(value => { random += value.toString(16) })
     return random.slice(0, 32)
   }
@@ -48,22 +48,25 @@ class Options {
   public connect(path: string, protocols: string[]): Promise<boolean> {
     return new Promise(resolve => {
       try {
-        let ws = new WebSocket(path, protocols)
-          , removeEvent = () => {
-            delete ws.onopen
-            delete ws.onerror
-          }
+        const ws = new WebSocket(path, protocols)
+        const removeEvent = () => {
+          delete ws.onopen
+          delete ws.onerror
+        }
         ws.onopen = () => {
           removeEvent()
           this._ws = ws
           this._init()
           resolve(true)
         }
-        ws.onerror = () => {
+        ws.onerror = error => {
           removeEvent()
+          console.error(error)
           resolve(false)
         }
-      } catch (error) {
+      }
+      catch (error) {
+        console.error(error)
         resolve(false)
       }
     })
@@ -86,8 +89,8 @@ class Options {
       else console.error(data)
     }
     this._ws.onmessage = data => {
-      let message: message = JSON.parse(data.data)
-        , ts = message.ts
+      const message: message = JSON.parse(data.data)
+      const ts = message.ts
       if (ts != null && typeof this.__callback[ts] === 'function') {
         delete message.ts
         this.__callback[ts](message)
@@ -109,16 +112,16 @@ class Options {
    */
   protected _send<T>(message: message): Promise<T> {
     return new Promise<T>((resolve, reject) => {
-      let timeout = setTimeout(() => {
+      const timeout = setTimeout(() => {
         reject('timeout')
-      }, 3e+4) // 30秒
-      let ts = this._ts
+      }, 30 * 1000) // 30秒
+      const ts = this._ts
       message.ts = ts
       this.__callback[ts] = (msg: T) => {
         clearTimeout(timeout)
         resolve(msg)
       }
-      let msg = JSON.stringify(message)
+      const msg = JSON.stringify(message)
       if (this._ws.readyState === WebSocket.OPEN) this._ws.send(msg)
       else reject('closed')
     })
@@ -163,7 +166,7 @@ class Options {
    * @memberof Options
    */
   public getLog(): Promise<logMSG> {
-    let message = { cmd: 'getLog' }
+    const message = { cmd: 'getLog' }
     return this._send<logMSG>(message)
   }
   /**
@@ -173,7 +176,7 @@ class Options {
    * @memberof Options
    */
   public getConfig(): Promise<configMSG> {
-    let message = { cmd: 'getConfig' }
+    const message = { cmd: 'getConfig' }
     return this._send<configMSG>(message)
   }
   /**
@@ -184,7 +187,7 @@ class Options {
    * @memberof Options
    */
   public setConfig(data: config): Promise<configMSG> {
-    let message = { cmd: 'setConfig', data }
+    const message = { cmd: 'setConfig', data }
     return this._send<configMSG>(message)
   }
   /**
@@ -194,7 +197,7 @@ class Options {
    * @memberof Options
    */
   public getInfo(): Promise<infoMSG> {
-    let message = { cmd: 'getInfo' }
+    const message = { cmd: 'getInfo' }
     return this._send<infoMSG>(message)
   }
   /**
@@ -204,7 +207,7 @@ class Options {
    * @memberof Options
    */
   public getAllUID(): Promise<userMSG> {
-    let message = { cmd: 'getAllUID' }
+    const message = { cmd: 'getAllUID' }
     return this._send<userMSG>(message)
   }
   /**
@@ -215,7 +218,7 @@ class Options {
    * @memberof Options
    */
   public getUserData(uid: string): Promise<userDataMSG> {
-    let message = { cmd: 'getUserData', uid }
+    const message = { cmd: 'getUserData', uid }
     return this._send<userDataMSG>(message)
   }
   /**
@@ -228,7 +231,7 @@ class Options {
    * @memberof Options
    */
   public setUserData(uid: string, data: userData, captcha?: string): Promise<userDataMSG> {
-    let message = { cmd: 'setUserData', uid, data, captcha }
+    const message = { cmd: 'setUserData', uid, data, captcha }
     if (captcha != null) message.captcha = captcha
     return this._send<userDataMSG>(message)
   }
@@ -240,7 +243,7 @@ class Options {
    * @memberof Options
    */
   public delUserData(uid: string): Promise<userDataMSG> {
-    let message = { cmd: 'delUserData', uid }
+    const message = { cmd: 'delUserData', uid }
     return this._send<userDataMSG>(message)
   }
   /**
@@ -250,7 +253,7 @@ class Options {
    * @memberof Options
    */
   public newUserData(): Promise<userDataMSG> {
-    let message = { cmd: 'newUserData' }
+    const message = { cmd: 'newUserData' }
     return this._send<userDataMSG>(message)
   }
 }

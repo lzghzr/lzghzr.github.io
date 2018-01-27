@@ -34,9 +34,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var options = new Options(), optionsInfo, dDiv = document.querySelector('#ddd'), loginDiv = document.querySelector('#login'), optionDiv = document.querySelector('#option'), configDiv = document.querySelector('#config'), userDiv = document.querySelector('#user'), logDiv = document.querySelector('#log'), returnButton = document.querySelector('#logreturn'), modalDiv = document.querySelector('.modal'), template = document.querySelector('#template')
+var options = new Options();
+var optionsInfo;
+var dDiv = document.querySelector('#ddd');
+var loginDiv = document.querySelector('#login');
+var optionDiv = document.querySelector('#option');
+var configDiv = document.querySelector('#config');
+var userDiv = document.querySelector('#user');
+var logDiv = document.querySelector('#log');
+var returnButton = document.querySelector('#logreturn');
+var modalDiv = document.querySelector('.modal');
+var template = document.querySelector('#template');
 // 3D效果
-, current = 'login';
+var current = 'login';
 function danimation(name) {
     if (current === 'login') {
         optionDiv.classList.remove('d-none');
@@ -117,7 +127,11 @@ dDiv.addEventListener('animationend', function (event) {
  */
 function showLogin() {
     var _this = this;
-    var pathInput = loginDiv.querySelector('#path input'), protocolInput = loginDiv.querySelector('#protocol input[type="text"]'), keepInput = loginDiv.querySelector('#protocol input[type="checkbox"]'), connectButton = loginDiv.querySelector('#connect button'), connectSpan = loginDiv.querySelector('#connect span');
+    var pathInput = loginDiv.querySelector('#path input');
+    var protocolInput = loginDiv.querySelector('#protocol input[type="text"]');
+    var keepInput = loginDiv.querySelector('#protocol input[type="checkbox"]');
+    var connectButton = loginDiv.querySelector('#connect button');
+    var connectSpan = loginDiv.querySelector('#connect span');
     connectButton.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
         var protocols, connected;
         return __generator(this, function (_a) {
@@ -191,10 +205,14 @@ function showConfig() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    saveConfigButton = document.querySelector('#saveConfig'), addUserButton = document.querySelector('#addUser'), showLogButton = document.querySelector('#showLog');
+                    saveConfigButton = document.querySelector('#saveConfig');
+                    addUserButton = document.querySelector('#addUser');
+                    showLogButton = document.querySelector('#showLog');
                     return [4 /*yield*/, options.getConfig()];
                 case 1:
-                    configMSG = _a.sent(), config = configMSG.data, configDF = getConfigTemplate(config);
+                    configMSG = _a.sent();
+                    config = configMSG.data;
+                    configDF = getConfigTemplate(config);
                     // 保存全局设置
                     saveConfigButton.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                         var configMSG, configDF_1;
@@ -227,7 +245,10 @@ function showConfig() {
                                     modal();
                                     return [4 /*yield*/, options.newUserData()];
                                 case 1:
-                                    userDataMSG = _a.sent(), uid = userDataMSG.uid, userData = userDataMSG.data, userDF = getUserDF(uid, userData);
+                                    userDataMSG = _a.sent();
+                                    uid = userDataMSG.uid;
+                                    userData = userDataMSG.data;
+                                    userDF = getUserDF(uid, userData);
                                     userDiv.appendChild(userDF);
                                     modal({ body: '添加成功' });
                                     return [2 /*return*/];
@@ -255,7 +276,9 @@ function showLog() {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, options.getLog()];
                 case 1:
-                    logMSG = _a.sent(), logs = logMSG.data, logDF = document.createDocumentFragment();
+                    logMSG = _a.sent();
+                    logs = logMSG.data;
+                    logDF = document.createDocumentFragment();
                     logs.forEach(function (log) {
                         var div = document.createElement('div');
                         div.innerText = log;
@@ -288,7 +311,9 @@ function showUser() {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, options.getAllUID()];
                 case 1:
-                    userMSG = _a.sent(), uidArray = userMSG.data, df = document.createDocumentFragment();
+                    userMSG = _a.sent();
+                    uidArray = userMSG.data;
+                    df = document.createDocumentFragment();
                     _i = 0, uidArray_1 = uidArray;
                     _a.label = 2;
                 case 2:
@@ -296,7 +321,9 @@ function showUser() {
                     uid = uidArray_1[_i];
                     return [4 /*yield*/, options.getUserData(uid)];
                 case 3:
-                    userDataMSG = _a.sent(), userData = userDataMSG.data, userDF = getUserDF(uid, userData);
+                    userDataMSG = _a.sent();
+                    userData = userDataMSG.data;
+                    userDF = getUserDF(uid, userData);
                     df.appendChild(userDF);
                     _a.label = 4;
                 case 4:
@@ -318,7 +345,13 @@ function showUser() {
  */
 function getUserDF(uid, userData) {
     var _this = this;
-    var userTemplate = template.querySelector('#userTemplate'), clone = document.importNode(userTemplate.content, true), userDataDiv = clone.querySelector('.userData'), userConfigDiv = clone.querySelector('.userConfig'), saveUserButton = clone.querySelector('.saveUser'), deleteUserButton = clone.querySelector('.deleteUser'), userConfigDF = getConfigTemplate(userData);
+    var userTemplate = template.querySelector('#userTemplate');
+    var clone = document.importNode(userTemplate.content, true);
+    var userDataDiv = clone.querySelector('.userData');
+    var userConfigDiv = clone.querySelector('.userConfig');
+    var saveUserButton = clone.querySelector('.saveUser');
+    var deleteUserButton = clone.querySelector('.deleteUser');
+    var userConfigDF = getConfigTemplate(userData);
     userConfigDiv.appendChild(userConfigDF);
     // 保存用户设置
     var captcha = undefined;
@@ -340,7 +373,10 @@ function getUserDF(uid, userData) {
                         userConfigDiv.appendChild(userConfigDF_1);
                     }
                     else if (userDataMSG.msg === 'captcha' && userDataMSG.captcha != null) {
-                        captchaTemplate = template.querySelector('#captchaTemplate'), clone_1 = document.importNode(captchaTemplate.content, true), captchaImg = clone_1.querySelector('img'), captchaInput_1 = clone_1.querySelector('input');
+                        captchaTemplate = template.querySelector('#captchaTemplate');
+                        clone_1 = document.importNode(captchaTemplate.content, true);
+                        captchaImg = clone_1.querySelector('img');
+                        captchaInput_1 = clone_1.querySelector('input');
                         captchaImg.src = userDataMSG.captcha;
                         modal({
                             body: clone_1,
@@ -391,12 +427,15 @@ function getConfigTemplate(config) {
         var info = optionsInfo[key];
         if (info == null)
             return "continue";
-        var configValue = config[key], configTemplate = void 0;
+        var configValue = config[key];
+        var configTemplate = void 0;
         if (info.type === 'boolean')
             configTemplate = template.querySelector('#configCheckboxTemplate');
         else
             configTemplate = template.querySelector('#configTextTemplate');
-        var clone = document.importNode(configTemplate.content, true), descriptionDiv = clone.querySelector('._description'), inputInput = clone.querySelector('input');
+        var clone = document.importNode(configTemplate.content, true);
+        var descriptionDiv = clone.querySelector('._description');
+        var inputInput = clone.querySelector('input');
         switch (info.type) {
             case 'number':
                 inputInput.value = configValue.toString();
@@ -452,7 +491,14 @@ function wsClose(data) {
  */
 function modal(options) {
     if (options != null) {
-        var modalDialogDiv_1 = modalDiv.querySelector('.modal-dialog'), modalTemplate = template.querySelector('#modalContentTemplate'), clone = document.importNode(modalTemplate.content, true), headerTitle = clone.querySelector('.modal-header .modal-title'), headerClose = clone.querySelector('.modal-header .close'), modalBody = clone.querySelector('.modal-body'), footerClose = clone.querySelector('.modal-footer .btn-secondary'), footerOK = clone.querySelector('.modal-footer .btn-primary');
+        var modalDialogDiv_1 = modalDiv.querySelector('.modal-dialog');
+        var modalTemplate = template.querySelector('#modalContentTemplate');
+        var clone = document.importNode(modalTemplate.content, true);
+        var headerTitle = clone.querySelector('.modal-header .modal-title');
+        var headerClose = clone.querySelector('.modal-header .close');
+        var modalBody = clone.querySelector('.modal-body');
+        var footerClose = clone.querySelector('.modal-footer .btn-secondary');
+        var footerOK = clone.querySelector('.modal-footer .btn-primary');
         headerClose.onclick = footerClose.onclick = function () {
             $(modalDiv).one('hidden.bs.modal', function () {
                 modalDialogDiv_1.innerText = '';
