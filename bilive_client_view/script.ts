@@ -30,14 +30,10 @@ function danimation(name: string) {
       loginDiv.style.cssText = ''
       break
     case 'option_to_log':
-      optionDiv.style.cssText = ''
-      break
-    case 'log_to_option':
-      logDiv.style.cssText = ''
-      break
     case 'option_to_login':
       optionDiv.style.cssText = ''
       break
+    case 'log_to_option':
     case 'log_to_login':
       logDiv.style.cssText = ''
       break
@@ -47,26 +43,21 @@ function danimation(name: string) {
   dDiv.className = name
 }
 dDiv.addEventListener('animationend', event => {
+  dDiv.className = 'fuck_transform'
   switch ((<any>event).animationName) {
-    case 'login_to_option':
-      optionDiv.style.cssText = 'transform: rotateY(90deg);'
-      current = 'option'
-      break
-    case 'option_to_log':
-      logDiv.style.cssText = 'transform: rotateY(180deg);'
-      current = 'log'
-      break
-    case 'log_to_option':
-      optionDiv.style.cssText = 'transform: rotateY(90deg);'
-      current = 'option'
-      break
     case 'option_to_login':
-      loginDiv.style.cssText = 'transform: rotateY(0deg);'
-      current = 'login'
-      break
     case 'log_to_login':
       loginDiv.style.cssText = 'transform: rotateY(0deg);'
       current = 'login'
+      break
+    case 'login_to_option':
+    case 'log_to_option':
+      optionDiv.style.cssText = 'transform: rotateY(0deg);'
+      current = 'option'
+      break
+    case 'option_to_log':
+      logDiv.style.cssText = 'transform: rotateY(0deg);'
+      current = 'log'
       break
     default:
       break

@@ -29,6 +29,9 @@ body {
   }
 }
 /* 3D效果 */
+#fuck_transform {
+  transform: rotateY(0deg);
+}
 #login {
   transform: rotateY(0deg) translateZ(50vw);
 }

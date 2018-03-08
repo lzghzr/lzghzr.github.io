@@ -45,3 +45,8 @@ configs/*.json
 
 # Build flies
 .vscode
+
+# Private files
+*.pac
+*.js
+*.json

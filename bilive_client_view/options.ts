@@ -22,7 +22,7 @@ class Options {
    * @type {WebSocket}
    * @memberof Options
    */
-  protected _ws: WebSocket
+  protected _ws!: WebSocket
   /**
    * 随机16进制数
    * 
@@ -131,25 +131,25 @@ class Options {
    * 
    * @memberof Options
    */
-  public onerror: (this: Options, data: MessageEvent) => void
+  public onerror!: (this: Options, data: MessageEvent) => void
   /**
    * 服务器log
    * 
    * @memberof Options
    */
-  public onlog: (this: Options, data: string) => void
+  public onlog!: (this: Options, data: string) => void
   /**
    * WebSocket错误消息
    * 
    * @memberof Options
    */
-  public onwserror: (this: Options, data: Event) => void
+  public onwserror!: (this: Options, data: Event) => void
   /**
    * WebSocket断开消息
    * 
    * @memberof Options
    */
-  public onwsclose: (this: Options, data: CloseEvent) => void
+  public onwsclose!: (this: Options, data: CloseEvent) => void
   /**
    * 关闭连接
    * 
