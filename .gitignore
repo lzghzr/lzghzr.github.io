@@ -50,3 +50,4 @@ configs/*.json
 *.pac
 *.js
 *.json
+aria-ng

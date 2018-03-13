@@ -10,71 +10,31 @@ const returnButton = <HTMLElement>document.querySelector('#logreturn')
 const modalDiv = <HTMLDivElement>document.querySelector('.modal')
 const template = <HTMLDivElement>document.querySelector('#template')
 // 3D效果
-let current: 'login' | 'option' | 'log' = 'login'
-function danimation(name: string) {
-  if (current === 'login') {
-    optionDiv.classList.remove('d-none')
-    logDiv.classList.remove('d-none')
-  }
-  else if (current === 'option') {
-    loginDiv.classList.remove('d-none')
-    logDiv.classList.remove('d-none')
-  }
-  else if (current === 'log') {
-    loginDiv.classList.remove('d-none')
-    optionDiv.classList.remove('d-none')
-    returnButton.classList.add('d-none')
-  }
-  switch (name) {
-    case 'login_to_option':
-      loginDiv.style.cssText = ''
-      break
-    case 'option_to_log':
-    case 'option_to_login':
-      optionDiv.style.cssText = ''
-      break
-    case 'log_to_option':
-    case 'log_to_login':
-      logDiv.style.cssText = ''
-      break
-    default:
-      break
-  }
-  dDiv.className = name
+let firstDiv: HTMLDivElement = loginDiv
+let secondDiv: HTMLDivElement
+const dddArray = ['top', 'bottom', 'left', 'right']
+let dddString: string
+function getRandomIntInclusive(min: number, max: number) {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min + 1)) + min
 }
-dDiv.addEventListener('animationend', event => {
-  dDiv.className = 'fuck_transform'
-  switch ((<any>event).animationName) {
-    case 'option_to_login':
-    case 'log_to_login':
-      loginDiv.style.cssText = 'transform: rotateY(0deg);'
-      current = 'login'
-      break
-    case 'login_to_option':
-    case 'log_to_option':
-      optionDiv.style.cssText = 'transform: rotateY(0deg);'
-      current = 'option'
-      break
-    case 'option_to_log':
-      logDiv.style.cssText = 'transform: rotateY(0deg);'
-      current = 'log'
-      break
-    default:
-      break
-  }
-  if (current === 'login') {
-    optionDiv.classList.add('d-none')
-    logDiv.classList.add('d-none')
-  }
-  else if (current === 'option') {
-    loginDiv.classList.add('d-none')
-    logDiv.classList.add('d-none')
-  }
-  else if (current === 'log') {
-    loginDiv.classList.add('d-none')
-    optionDiv.classList.add('d-none')
-    returnButton.classList.remove('d-none')
-  }
+function danimation(toDiv: HTMLDivElement) {
+  dddString = dddArray[getRandomIntInclusive(0, 3)]
+  if (firstDiv === logDiv) returnButton.classList.add('d-none')
+  secondDiv = toDiv
+  secondDiv.classList.add(`d_${dddString}2`)
+  secondDiv.classList.remove('d-none')
+  firstDiv.classList.add(`d_${dddString}1`)
+  dDiv.className = `ddd_${dddString}`
+}
+dDiv.addEventListener('animationend', () => {
+  dDiv.className = ''
+  firstDiv.classList.remove(`d_${dddString}1`)
+  firstDiv.classList.add('d-none')
+  secondDiv.classList.remove(`d_${dddString}2`)
+  firstDiv = secondDiv
+  if (firstDiv === logDiv) returnButton.classList.remove('d-none')
 })
 /**
  * 显示登录界面
@@ -93,7 +53,6 @@ function showLogin() {
     if (connected) login()
     else connectSpan.innerText = '连接失败'
   }
-  loginDiv.style.cssText = 'transform: rotateY(0deg);'
   loginDiv.classList.remove('d-none')
 }
 /**
@@ -116,7 +75,7 @@ async function login() {
       wsClose('连接已关闭')
     }
   }
-  danimation('login_to_option')
+  danimation(optionDiv)
   await showConfig()
   await showUser()
   showLog()
@@ -157,7 +116,7 @@ async function showConfig() {
   }
   // 显示日志
   showLogButton.onclick = () => {
-    danimation('option_to_log')
+    danimation(logDiv)
   }
   configDiv.appendChild(configDF)
 }
@@ -181,7 +140,7 @@ async function showLog() {
     if (logDiv.scrollHeight - logDiv.clientHeight - logDiv.scrollTop < 2 * div.offsetHeight) logDiv.scrollTop = logDiv.scrollHeight
   }
   returnButton.onclick = () => {
-    danimation('log_to_option')
+    danimation(optionDiv)
   }
   logDiv.appendChild(logDF)
 }
@@ -316,8 +275,7 @@ function wsClose(data: string) {
   logDiv.innerText = ''
   userDiv.innerText = ''
   connectSpan.innerText = data
-  if (current === 'option') danimation('option_to_login')
-  else danimation('log_to_login')
+  danimation(loginDiv)
 }
 /**
  * 弹窗提示
